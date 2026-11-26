@@ -75,10 +75,10 @@ describe("fright multiplier", () => {
 describe("state thresholds", () => {
   it("maps sanity to states at 70 / 35 / 0", () => {
     expect(stateOf(withSanity(100))).toBe("investigate");
-    expect(stateOf(withSanity(SANITY.rattledAt))).toBe("investigate");
-    expect(stateOf(withSanity(SANITY.rattledAt - 1))).toBe("rattled");
-    expect(stateOf(withSanity(SANITY.panickedAt))).toBe("rattled");
-    expect(stateOf(withSanity(SANITY.panickedAt - 1))).toBe("panicked");
+    expect(stateOf(withSanity(SANITY.rattledAt + 1))).toBe("investigate");
+    expect(stateOf(withSanity(SANITY.rattledAt))).toBe("rattled");
+    expect(stateOf(withSanity(SANITY.panickedAt + 1))).toBe("rattled");
+    expect(stateOf(withSanity(SANITY.panickedAt))).toBe("panicked");
     expect(stateOf(withSanity(SANITY.fleeingAt))).toBe("fleeing");
   });
 
