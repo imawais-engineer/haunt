@@ -13,5 +13,6 @@ Work in order. Do not start the next spec until these tests are green.
 - [x] 1.5 `tests/core/` — Vitest unit tests + fast-check property tests
   for the four invariants in `design.md`. Run via the save hook.
 - [x] 1.6 Acceptance: `npm test` green; a scripted sequence (possess
-  piano → scare Medium twice, chained) drops sanity as the table says
-  and never breaks an invariant.
+  piano → scare Medium three times; the first scare takes sanity 100 to
+  80, still above the 70 Rattled threshold, so the third is chained) drops
+  sanity as the table says and never breaks an invariant.

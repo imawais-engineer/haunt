@@ -41,11 +41,11 @@ tune this table — never add a new system.
 
 - Chaining rule: a scare is chained when the target is below the rattled
   threshold (70) or was rattled within the last 10 seconds. It is keyed to
-  the target, not to which object scared last. Requirements R-fright says
+  the target, not to which object scared last. Requirement R2 says
   the same, so this is intentional for v1.
 - `frightMultiplier` is 1.0 for chandelier, piano and painting and 1.5 for
-  mirror. The spec gives no multiplier values, so no new values are
-  invented here. They are tuning knobs in `balance.ts` to be set from
+  mirror. These values are placeholders: requirement R2 gives no multiplier
+  values, so no new values are invented here. They are tuning knobs in `balance.ts` to be set from
   playtests, not by this spec.
 - `clampSanity(NaN)` returns 0, matching `clampEctoplasm(NaN)`.
 - `npm run simulate:balance` has no possession or travel model and is not a
