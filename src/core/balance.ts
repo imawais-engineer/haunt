@@ -64,3 +64,56 @@ export const SCARE_RADIUS_PX = {
 export const FALLOFF = {
   edgeFactor: 0.4,
 } as const;
+
+/**
+ * Investigator personalities (Spec 2). Three numbers each: speed, recovery
+ * and investigate tendency. One shared state machine, three parameter sets.
+ */
+export type InvestigatorKind = "skeptic" | "medium" | "photographer";
+
+export interface Personality {
+  /** Walking speed in px/s while investigating. */
+  speed: number;
+  /** Multiplier on SANITY.recoveryPerTick. */
+  recoveryRate: number;
+  /** 0..1. At or above `INVESTIGATE.walkTowardAt` the investigator walks toward the last scare. */
+  investigateTendency: number;
+}
+
+export const PERSONALITIES: Record<InvestigatorKind, Personality> = {
+  skeptic:      { speed: 120, recoveryRate: 2,   investigateTendency: 0.9 },
+  medium:       { speed: 60,  recoveryRate: 0.5, investigateTendency: 0.2 },
+  photographer: { speed: 90,  recoveryRate: 1,   investigateTendency: 0.5 },
+};
+
+/** Behaviour by state. Speed factors multiply the personality speed. */
+export const BEHAVIOUR = {
+  rattledSpeedFactor: 0.5,
+  panickedSpeedFactor: 0.75,
+  fleeingSpeedFactor: 1.5,
+} as const;
+
+export const INVESTIGATE = {
+  /** Tendency needed to walk toward the last scare. */
+  walkTowardAt: 0.7,
+  /** How long a scare location stays interesting, seconds. */
+  scareMemorySeconds: 20,
+} as const;
+
+export const MEDIUM = {
+  /** Distance in px at which the Medium senses a possessed object. */
+  senseRadiusPx: 200,
+  pauseSeconds: 2,
+  /** Seconds before she can pause for the same sensing again. */
+  senseCooldownSeconds: 6,
+} as const;
+
+export const PHOTOGRAPHER = {
+  /** She pauses to photograph this often, seconds. */
+  photoIntervalSeconds: 6,
+  pauseSeconds: 2,
+  /** Flash reveals the ghost's position this long, from the start of the pause. */
+  flashSeconds: 1.5,
+  /** A scare that lands while she is not paused (facing away) is wasted. */
+  wastedWhenFacingAway: true,
+} as const;

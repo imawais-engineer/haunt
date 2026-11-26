@@ -41,12 +41,16 @@ export function createInvestigator(): Investigator {
   return { sanity: SANITY.start, gone: false, lastRattledAt: null, calmSeconds: 0 };
 }
 
-export function stateOf(inv: Investigator): InvestigatorState {
-  if (inv.gone) return "gone";
-  if (inv.sanity <= SANITY.fleeingAt) return "fleeing";
-  if (inv.sanity < SANITY.panickedAt) return "panicked";
-  if (inv.sanity < SANITY.rattledAt) return "rattled";
+/** Threshold lookup. Thresholds are inclusive: sanity at or below a value is in that state. */
+export function stateForSanity(sanity: number): Exclude<InvestigatorState, "gone"> {
+  if (sanity <= SANITY.fleeingAt) return "fleeing";
+  if (sanity <= SANITY.panickedAt) return "panicked";
+  if (sanity <= SANITY.rattledAt) return "rattled";
   return "investigate";
+}
+
+export function stateOf(inv: Investigator): InvestigatorState {
+  return inv.gone ? "gone" : stateForSanity(inv.sanity);
 }
 
 export function markGone(inv: Investigator): Investigator {
@@ -62,7 +66,7 @@ export function distanceFactor(object: ScareObject, distance: number): number {
 }
 
 function wasRecentlyRattled(inv: Investigator, now: number): boolean {
-  if (inv.sanity < SANITY.rattledAt) return true;
+  if (inv.sanity <= SANITY.rattledAt) return true;
   return inv.lastRattledAt !== null && now - inv.lastRattledAt <= NIGHT.frightWindowSeconds;
 }
 
@@ -83,7 +87,7 @@ export function applyScare(
   const chained = wasRecentlyRattled(inv, now);
   const damage = object.damage * factor * (chained ? object.frightMultiplier : 1);
   const sanity = clampSanity(inv.sanity - damage);
-  const lastRattledAt = sanity < SANITY.rattledAt ? now : inv.lastRattledAt;
+  const lastRattledAt = sanity <= SANITY.rattledAt ? now : inv.lastRattledAt;
   const investigator: Investigator = { ...inv, sanity, lastRattledAt, calmSeconds: 0 };
   return { investigator, sanity, fired: true, damage, chained };
 }
@@ -92,7 +96,13 @@ export function applyScare(
  * Advance recovery by dt seconds. Only a calm investigator who is alone
  * recovers; otherwise the progress toward the next tick resets.
  */
-export function recoverTick(inv: Investigator, dt: number, alone: boolean): Investigator {
+export function recoverTick(
+  inv: Investigator,
+  dt: number,
+  alone: boolean,
+  /** Personality multiplier on the per-tick recovery amount. */
+  rate: number = 1,
+): Investigator {
   const calm = alone && stateOf(inv) === "investigate";
   if (!calm) return inv.calmSeconds === 0 ? inv : { ...inv, calmSeconds: 0 };
   if (!(dt > 0)) return inv;
@@ -100,7 +110,7 @@ export function recoverTick(inv: Investigator, dt: number, alone: boolean): Inve
   const ticks = Math.floor(total / SANITY.recoveryTickSeconds);
   return {
     ...inv,
-    sanity: clampSanity(inv.sanity + ticks * SANITY.recoveryPerTick),
+    sanity: clampSanity(inv.sanity + ticks * SANITY.recoveryPerTick * rate),
     calmSeconds: total - ticks * SANITY.recoveryTickSeconds,
   };
 }
