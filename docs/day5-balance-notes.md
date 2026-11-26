@@ -2,7 +2,14 @@
 
 ## Baseline (no tuning applied)
 
-`npm run simulate:balance` bot result: wins with about 163s left (the 190.8s seen after the possessCost change to 0 is not the baseline), 3 of 3 investigators gone, 15 scares.
+`npm run simulate:balance` bot result, both numbers recorded:
+
+- 163s left: measured at `possessCost` 5 (historical).
+- 190.8s left: measured at `possessCost` 0 (current baseline).
+
+Both runs: 3 of 3 investigators gone, 15 scares (wins).
+
+If a possess cost is ever reintroduced, the skipped ectoplasm-heading test un-skips.
 
 All tuning numbers live only in `src/core/balance.ts`.
 

@@ -90,6 +90,8 @@ export class MansionScene extends Phaser.Scene {
     if (id && this.ghost.possessed === id) return this.doScare();
     if (id) {
       this.driftTarget = null;
+      // Clicking a different object while possessing: release, then fly to the new one.
+      if (this.ghost.possessed) this.ghost = release(this.ghost);
       this.ghost = headFor(this.ghost, id);
     } else if (!this.ghost.possessed) {
       this.driftTarget = p;

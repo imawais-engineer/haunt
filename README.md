@@ -35,7 +35,7 @@ The fright multiplier applies when the target was rattled within the last 10 sec
 
 ## Tech stack
 
-- **Phaser 3** for scenes, rendering, and input
+- **Phaser 4** for scenes, rendering, and input
 - **TypeScript** for the whole project
 - **Vite** for the development server and the production build
 - **Vitest** and **fast-check** for unit tests and property tests

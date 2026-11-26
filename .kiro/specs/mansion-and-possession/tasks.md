@@ -1,6 +1,6 @@
 # Spec 3 — tasks: mansion and possession
 
-- [x] 3.1 Phaser 3 + Vite skeleton; empty mansion renders (Day 2).
+- [x] 3.1 Phaser 4 + Vite skeleton; empty mansion renders (Day 2).
 - [ ] 3.2 Room layout, object placement, collision (Level Architect).
 - [ ] 3.3 Ghost movement (mouse / WASD / arrows) and possession (click / E).
 - [ ] 3.4 Scare trigger (click / Space) with per-object cooldowns.
