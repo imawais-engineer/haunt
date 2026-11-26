@@ -9,6 +9,8 @@
 | `ectoplasm.ts` | `canAfford`, `spend`, `regenTick` (+2/s, unpossessed only). |
 | `night.ts` | `NightTimer`: 300s, `timeLeft`, `isDawn`, ends game at 0. |
 
+Thresholds are inclusive: sanity ≤ 70 is Rattled, ≤ 35 is Panicked, 0 is Fleeing.
+
 ## Balance table v1
 
 | Object | Cost | Damage | Radius | Cooldown |

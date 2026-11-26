@@ -187,11 +187,11 @@ describe("personalities", () => {
     expect(flashRevealsGhost(createAgent("medium"), 0)).toBe(false);
   });
 
-  it("scaring a paused Photographer has full effect; facing away wastes it", () => {
+  it("scaring a paused Photographer has full effect; while moving she takes partial damage", () => {
     const t = PHOTOGRAPHER.photoIntervalSeconds;
     const away = scareAgent(createAgent("photographer"), piano, 0, 1);
-    expect(away.fired).toBe(false);
-    expect(away.agent.core.sanity).toBe(100);
+    expect(away.fired).toBe(true);
+    expect(away.agent.core.sanity).toBeCloseTo(100 - piano.damage * PHOTOGRAPHER.movingDamageMultiplier);
     const paused = updateAgent(createAgent("photographer"), t);
     const hit = scareAgent(paused, piano, 0, t);
     expect(hit.fired).toBe(true);

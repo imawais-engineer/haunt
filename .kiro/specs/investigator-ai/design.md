@@ -11,6 +11,11 @@ Investigate ──sanity ≤ 70──▶ Rattled ──sanity ≤ 35──▶ Pa
 ```
 
 One shared machine for all three investigators. Thresholds: 70 / 35 / 0.
+Thresholds are inclusive: sanity ≤ 70 is Rattled, ≤ 35 is Panicked, 0 is Fleeing.
+
+Recovery: Spec 1 R3 wins. Rattled, Panicked and Fleeing investigators never
+recover. The Rattled → Investigate edge in `nextState` stays only as a
+defensive fallback that cannot trigger under R3.
 
 ## Personalities (three numbers each, not three codebases)
 
@@ -21,6 +26,9 @@ One shared machine for all three investigators. Thresholds: 70 / 35 / 0.
 | The Photographer | medium | medium | medium — pauses often to photograph |
 
 Photographer flash briefly reveals the ghost's position in the room.
+A scare takes 50% damage while she is moving and 100% while paused taking a
+photo. The 50% (`PHOTOGRAPHER.movingDamageMultiplier`) is a placeholder for
+the Day 5 balance pass.
 
 ## Module
 

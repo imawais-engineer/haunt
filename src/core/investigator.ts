@@ -112,7 +112,8 @@ export function flashRevealsGhost(agent: Agent, now: number): boolean {
 
 /**
  * Resolve a scare. `at` is where the scare happened (remembered so the Skeptic
- * walks toward it). A Photographer facing away (not paused) wastes the scare.
+ * walks toward it). A Photographer takes partial damage while moving
+ * and full damage while paused (see PHOTOGRAPHER in balance.ts).
  */
 export function scareAgent(
   agent: Agent,
@@ -121,12 +122,16 @@ export function scareAgent(
   now: number,
   at: Point | null = null,
 ): ScareResult & { readonly agent: Agent } {
-  const wasted =
-    agent.kind === "photographer" && PHOTOGRAPHER.wastedWhenFacingAway && !isPaused(agent, now);
-  if (agentState(agent) === "gone" || wasted) {
+  if (agentState(agent) === "gone") {
     return { investigator: agent.core, sanity: agent.core.sanity, fired: false, damage: 0, chained: false, agent };
   }
-  const result = applyScare(agent.core, object, distance, now);
+  const multiplier =
+    agent.kind !== "photographer"
+      ? 1
+      : isPaused(agent, now)
+        ? PHOTOGRAPHER.pausedDamageMultiplier
+        : PHOTOGRAPHER.movingDamageMultiplier;
+  const result = applyScare(agent.core, { ...object, damage: object.damage * multiplier }, distance, now);
   const lastScare = result.fired && at ? { ...at, at: now } : agent.lastScare;
   return { ...result, agent: { ...agent, core: result.investigator, lastScare } };
 }

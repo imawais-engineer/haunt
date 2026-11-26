@@ -114,6 +114,11 @@ export const PHOTOGRAPHER = {
   pauseSeconds: 2,
   /** Flash reveals the ghost's position this long, from the start of the pause. */
   flashSeconds: 1.5,
-  /** A scare that lands while she is not paused (facing away) is wasted. */
-  wastedWhenFacingAway: true,
+  /**
+   * Share of scare damage she takes while moving. PLACEHOLDER: revisit in the
+   * Day 5 balance pass.
+   */
+  movingDamageMultiplier: 0.5,
+  /** Share of scare damage she takes while paused taking a photo. */
+  pausedDamageMultiplier: 1,
 } as const;
