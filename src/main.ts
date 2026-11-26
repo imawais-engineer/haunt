@@ -1,2 +1,4 @@
-// Entry placeholder. Scenes and rendering arrive in a later spec.
-export {};
+import Phaser from "phaser";
+import { gameConfig } from "./game/config";
+
+new Phaser.Game(gameConfig);

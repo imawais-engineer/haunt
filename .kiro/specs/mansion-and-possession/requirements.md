@@ -26,7 +26,7 @@
 
 ## Design
 
-- Phaser 3 scenes: Boot, Title, Mansion, End. Scenes render and take
+- Phaser 4 scenes: Boot, Title, Mansion, End. Scenes render and take
   input only; every rule lives in `src/core/` and scenes ask it.
 - `src/core/` never imports Phaser. `game/` never hard-codes a tuning
   number — it reads `balance.ts`.
