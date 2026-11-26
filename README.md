@@ -61,6 +61,10 @@ Haunt is built spec by spec, in this order:
 
 Each spec is carried through its requirements, design, and tasks before the next one starts.
 
+## Assets and audio
+
+Haunt ships no image or audio files. All sound (scare stingers, ambient hum, footsteps, screams, win/lose stings) is synthesized at runtime with WebAudio and starts after the first click or key press. All visuals are drawn with Phaser graphics.
+
 ## Status
 
 Haunt is in active development.

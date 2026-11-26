@@ -1,0 +1,56 @@
+import { describe, expect, it } from "vitest";
+import { advanceStride, candleFlicker, effectProgress, facingFor, flareEnvelope, pianoSchedule, shakeOffset, walkBob } from "../../src/game/effects";
+import { AUDIO, FX } from "../../src/game/presentation";
+
+describe("effects helpers", () => {
+  it("effectProgress is null outside the window", () => {
+    expect(effectProgress(0.5, 1)).toBeNull();
+    expect(effectProgress(2 + FX.scareSeconds, 1)).toBeNull();
+    expect(effectProgress(1 + FX.scareSeconds / 2, 1)).toBeCloseTo(0.5);
+  });
+  it("shake decays to zero and is bounded", () => {
+    for (let p = 0; p < 1; p += 0.05) {
+      const o = shakeOffset(p);
+      expect(Math.abs(o.x)).toBeLessThanOrEqual(FX.shakeAmplitude);
+      expect(Math.abs(o.y)).toBeLessThanOrEqual(FX.shakeAmplitude);
+    }
+    expect(shakeOffset(1)).toEqual({ x: 0, y: 0 });
+  });
+  it("flare rises then falls within 0..1", () => {
+    expect(flareEnvelope(0)).toBe(0);
+    expect(flareEnvelope(0.15)).toBe(1);
+    expect(flareEnvelope(1)).toBe(0);
+  });
+  it("candle flicker stays in range", () => {
+    for (let t = 0; t < 10; t += 0.037) {
+      const f = candleFlicker(t);
+      expect(f).toBeGreaterThanOrEqual(1 - FX.flickerDepth - 1e-9);
+      expect(f).toBeLessThanOrEqual(1 + 1e-9);
+    }
+  });
+  it("footstep cadence follows distance walked", () => {
+    expect(advanceStride(0, 0, 1)).toEqual({ acc: 0, steps: 0 });
+    let acc = 0;
+    let steps = 0;
+    for (let i = 0; i < 100; i++) {
+      const r = advanceStride(acc, 56, 0.1);
+      acc = r.acc;
+      steps += r.steps;
+    }
+    expect(steps).toBe(Math.floor((56 * 10) / FX.strideLengthPx));
+  });
+  it("bob is zero when still and never positive", () => {
+    expect(walkBob(1, 0)).toBe(0);
+    expect(walkBob(0.3, 60)).toBeLessThanOrEqual(0);
+  });
+  it("facing keeps previous when nearly still", () => {
+    expect(facingFor(0, -1)).toBe(-1);
+    expect(facingFor(3, -1)).toBe(1);
+    expect(facingFor(-3, 1)).toBe(-1);
+  });
+  it("piano phrase has one start per note, increasing", () => {
+    const s = pianoSchedule();
+    expect(s).toHaveLength(AUDIO.pianoNotes.length);
+    expect(s).toEqual([...s].sort((a, b) => a - b));
+  });
+});
