@@ -179,7 +179,7 @@ export function behaviourOf(agent: Agent, now: number, door: Point | null = null
     case "panicked":
       return { action: "back-away", speed: p.speed * BEHAVIOUR.panickedSpeedFactor, target: door };
     case "rattled":
-      return { action: "freeze", speed: p.speed * BEHAVIOUR.rattledSpeedFactor, target: null };
+      return { action: "freeze", speed: 0, target: null };
     case "investigate": {
       if (isPaused(agent, now)) return { action: "pause", speed: 0, target: null };
       const s = agent.lastScare;

@@ -36,8 +36,10 @@ describe("possess / release", () => {
   it("fails out of range, when broke, or when already possessing", () => {
     const far = createGhost(100);
     expect(possess(far, "mirror")).toBe(far);
-    const broke = at(createGhost(GHOST.possessCost - 1), "mirror");
-    expect(possess(broke, "mirror").possessed).toBeNull();
+    if (GHOST.possessCost > 0) {
+      const broke = at(createGhost(GHOST.possessCost - 1), "mirror");
+      expect(possess(broke, "mirror").possessed).toBeNull();
+    }
     const g = possessing("piano");
     expect(possess(g, "piano")).toBe(g);
   });
@@ -75,7 +77,7 @@ describe("travel", () => {
     expect(t).toBeGreaterThan(eta - GHOST.possessRangePx / GHOST.speedPxPerSecond - 0.2);
   });
 
-  it("gives up the heading when ectoplasm is too low", () => {
+  it.skipIf(GHOST.possessCost === 0)("gives up the heading when ectoplasm is too low", () => {
     let g = headFor(createGhost(0), "painting");
     for (let i = 0; i < 200; i++) g = { ...updateGhost(g, 0.1), ectoplasm: 0 };
     expect(g.possessed).toBeNull();

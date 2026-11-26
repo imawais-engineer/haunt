@@ -180,6 +180,9 @@ export const GHOST = {
   possessRangePx: 70,
   /** Possessable objects glow while the ghost drifts within this distance. */
   glowRangePx: 180,
-  /** Ectoplasm spent to enter an object. Leaving is free. */
-  possessCost: 5,
+  /**
+   * Ectoplasm spent to enter an object. The spec defines no possess cost, only
+   * scares cost ectoplasm. Day 5 lever: raise this if possession-hopping feels free.
+   */
+  possessCost: 0,
 } as const;
