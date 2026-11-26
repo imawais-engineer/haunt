@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import fc from "fast-check";
 import { NIGHT, SANITY, SCARE_OBJECTS, SCARE_RADIUS_PX } from "../../src/core/balance";
+import { clampEctoplasm } from "../../src/core/ectoplasm";
 import {
+  clampSanity,
   applyScare,
   createInvestigator,
   markGone,
@@ -158,5 +160,12 @@ describe("properties", () => {
         (sanity, dt, alone) => recoverTick(withSanity(sanity), dt, alone).sanity >= sanity,
       ),
     );
+  });
+});
+
+describe("NaN handling", () => {
+  it("clampSanity fails toward a scared investigator, like clampEctoplasm", () => {
+    expect(clampSanity(Number.NaN)).toBe(0);
+    expect(clampEctoplasm(Number.NaN)).toBe(0);
   });
 });

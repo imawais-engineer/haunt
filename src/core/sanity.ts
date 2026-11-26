@@ -32,7 +32,8 @@ export interface ScareResult {
 }
 
 export function clampSanity(value: number): number {
-  if (Number.isNaN(value)) return SANITY.max;
+  // Fail toward a scared investigator, matching clampEctoplasm(NaN) = 0.
+  if (Number.isNaN(value)) return 0;
   return Math.min(SANITY.max, Math.max(0, value));
 }
 

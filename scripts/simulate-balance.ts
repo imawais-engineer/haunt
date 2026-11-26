@@ -1,4 +1,7 @@
 // Headless scripted night using src/core only. Prints the result.
+// NOT a balance signal: the bot has no possession, travel time or distance
+// (every scare lands at distance 0 and `possessing` is approximated by "scared
+// this tick"). Do not tune balance.ts against this output until it models those.
 import { ECTOPLASM, NIGHT, SCARE_OBJECTS } from "../src/core/balance";
 import { regenTick, tryFire, type Cooldowns } from "../src/core/ectoplasm";
 import { NightTimer, nightOutcome } from "../src/core/night";
@@ -37,5 +40,5 @@ while (!timer.isDawn && nightOutcome(investigators, timer) === "ongoing") {
 }
 
 console.log(
-  `outcome=${nightOutcome(investigators, timer)} fled=${fled}/3 timeLeft=${timer.timeLeft}s of ${NIGHT.durationSeconds}s ectoplasm=${ecto.toFixed(0)}`,
+  `[not a balance signal: no possession/travel model] outcome=${nightOutcome(investigators, timer)} fled=${fled}/3 timeLeft=${timer.timeLeft}s of ${NIGHT.durationSeconds}s ectoplasm=${ecto.toFixed(0)}`,
 );
