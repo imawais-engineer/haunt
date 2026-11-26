@@ -223,7 +223,7 @@ export class MansionScene extends Phaser.Scene {
       label.setVisible(b.action !== "gone");
       if (b.action === "gone") continue;
       this.drawActor(a, b);
-      label.setPosition(a.pos.x, a.pos.y - SIZES.actorLabelOffsetY).setText(`${KIND_LABELS[a.agent.kind]}\n${b.action}`);
+      label.setPosition(a.pos.x, a.pos.y - SIZES.actorLabelOffsetY - KINDS.indexOf(a.agent.kind) * SIZES.actorLabelStaggerY).setText(`${KIND_LABELS[a.agent.kind]}\n${b.action}`);
     }
 
     this.drawFog();

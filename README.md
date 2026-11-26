@@ -72,3 +72,7 @@ Haunt is in active development.
 ## License
 
 Released under the [MIT License](LICENSE). Copyright (c) 2026 Muhammad Awais.
+
+## Playtest script
+
+`npm i` then `npx playwright install chromium`, and run `node scripts/playtest.mjs win` or `node scripts/playtest.mjs lose`. It plays a real-time night in headless Chromium and writes screenshots and logs to `docs/day4-playtest/`. Results are in [`docs/day4-playtest.md`](docs/day4-playtest.md). Opening the game with `?debug` exposes a read-only `window.__haunt` for this script.

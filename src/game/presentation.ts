@@ -64,6 +64,8 @@ export const SIZES = {
   roomLineWidth: 2,
   labelOffsetY: 26,
   actorLabelOffsetY: 34,
+  /** Extra lift per investigator so labels of a clustered group do not overlap. */
+  actorLabelStaggerY: 30,
   maxFrameSeconds: 0.1,
   scareFlashMs: 120,
   fadeMs: 250,
