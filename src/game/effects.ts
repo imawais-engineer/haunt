@@ -62,3 +62,16 @@ export function facingFor(dx: number, previous: 1 | -1): 1 | -1 {
 export function pianoSchedule(): number[] {
   return AUDIO.pianoNotes.map((_, i) => i * AUDIO.pianoNoteSeconds);
 }
+
+/** Unit direction from held movement keys. Opposite keys cancel; diagonals are normalised. */
+export function keyDirection(left: boolean, right: boolean, up: boolean, down: boolean): { x: number; y: number } {
+  const x = (right ? 1 : 0) - (left ? 1 : 0);
+  const y = (down ? 1 : 0) - (up ? 1 : 0);
+  const len = Math.hypot(x, y);
+  return len === 0 ? { x: 0, y: 0 } : { x: x / len, y: y / len };
+}
+
+/** Clamp a point into the rectangle 0..width, 0..height. */
+export function clampPoint(p: { x: number; y: number }, width: number, height: number): { x: number; y: number } {
+  return { x: Math.min(width, Math.max(0, p.x)), y: Math.min(height, Math.max(0, p.y)) };
+}

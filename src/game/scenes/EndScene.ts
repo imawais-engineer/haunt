@@ -24,8 +24,13 @@ export class EndScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add.text(cx, SCREEN.hintY, TEXT.restartHint, { fontFamily: FONT.family, fontSize: FONT.medium, color: COLORS.roomLabel }).setOrigin(0.5);
-    const restart = () => this.scene.start("Mansion");
+    let started = false;
+    const restart = () => {
+      if (started) return;
+      started = true;
+      this.scene.start("Mansion");
+    };
     this.input.once("pointerdown", restart);
-    this.input.keyboard?.once("keydown-ENTER", restart);
+    for (const key of ["ENTER", "R", "ESC"]) this.input.keyboard?.once(`keydown-${key}`, restart);
   }
 }

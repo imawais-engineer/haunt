@@ -20,7 +20,7 @@ import {
 } from "../../core/possession";
 import { Hud } from "../../ui/hud";
 import { gameAudio } from "../audio";
-import { advanceStride, candleFlicker, effectProgress, facingFor, flareEnvelope, shakeOffset, walkBob } from "../effects";
+import { advanceStride, candleFlicker, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, shakeOffset, walkBob } from "../effects";
 import { ACTOR_LOOK, COLORS, FONT, FX, FX_COLORS, KIND_LABELS, OBJECT_LABELS, ROOM_LABELS, SIZES, STATE_COLORS } from "../presentation";
 
 const KINDS: readonly InvestigatorKind[] = ["skeptic", "medium", "photographer"];
@@ -37,6 +37,7 @@ export class MansionScene extends Phaser.Scene {
   private hud!: Hud;
   private actorLabels = new Map<InvestigatorKind, Phaser.GameObjects.Text>();
   private ended = false;
+  private keys: Record<"left" | "right" | "up" | "down" | "a" | "d" | "w" | "s", Phaser.Input.Keyboard.Key> | null = null;
   private scareFx = new Map<ObjectId, number>();
   private stride = new Map<InvestigatorKind, number>();
   private facing = new Map<InvestigatorKind, 1 | -1>();
@@ -84,6 +85,15 @@ export class MansionScene extends Phaser.Scene {
     kb?.on("keydown-E", () => this.doPossess());
     kb?.on("keydown-R", () => this.doRelease());
     kb?.on("keydown-M", () => gameAudio.toggleMute());
+    const K = Phaser.Input.Keyboard.KeyCodes;
+    this.keys = kb
+      ? (kb.addKeys({ left: K.LEFT, right: K.RIGHT, up: K.UP, down: K.DOWN, a: K.A, d: K.D, w: K.W, s: K.S }) as NonNullable<typeof this.keys>)
+      : null;
+    this.events.once("shutdown", () => {
+      kb?.removeAllListeners();
+      for (const k of ["LEFT", "RIGHT", "UP", "DOWN", "A", "D", "W", "S"] as const) kb?.removeKey(K[k]);
+      this.keys = null;
+    });
   }
 
   private objectAt(p: Point): ObjectId | null {
@@ -140,7 +150,14 @@ export class MansionScene extends Phaser.Scene {
     this.now += dt;
     this.timer.tick(dt);
 
-    if (this.driftTarget && !this.ghost.possessed && !this.ghost.heading) {
+    const k = this.keys;
+    const dir = k ? keyDirection(k.left.isDown || k.a.isDown, k.right.isDown || k.d.isDown, k.up.isDown || k.w.isDown, k.down.isDown || k.s.isDown) : { x: 0, y: 0 };
+    if (!this.ghost.possessed && (dir.x !== 0 || dir.y !== 0)) {
+      const reach = MANSION.width;
+      this.driftTarget = null;
+      this.ghost = drift(this.ghost, { x: this.ghost.pos.x + dir.x * reach, y: this.ghost.pos.y + dir.y * reach }, dt);
+      this.ghost = { ...this.ghost, pos: clampPoint(this.ghost.pos, MANSION.width, MANSION.height) };
+    } else if (this.driftTarget && !this.ghost.possessed && !this.ghost.heading) {
       this.ghost = drift(this.ghost, this.driftTarget, dt);
       if (distance(this.ghost.pos, this.driftTarget) === 0) this.driftTarget = null;
     }

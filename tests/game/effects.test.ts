@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceStride, candleFlicker, effectProgress, facingFor, flareEnvelope, masterGain, pianoSchedule, shouldRunAudio, shakeOffset, walkBob } from "../../src/game/effects";
+import { advanceStride, candleFlicker, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, masterGain, pianoSchedule, shouldRunAudio, shakeOffset, walkBob } from "../../src/game/effects";
 import { AUDIO, FX } from "../../src/game/presentation";
 
 describe("effects helpers", () => {
@@ -63,5 +63,18 @@ describe("audio state helpers", () => {
   it("shouldRunAudio is false only when the tab is hidden", () => {
     expect(shouldRunAudio("hidden")).toBe(false);
     expect(shouldRunAudio("visible")).toBe(true);
+  });
+
+  it("keyDirection is unit length, cancels opposites", () => {
+    expect(keyDirection(false, false, false, false)).toEqual({ x: 0, y: 0 });
+    expect(keyDirection(true, true, false, false)).toEqual({ x: 0, y: 0 });
+    expect(keyDirection(false, true, false, false)).toEqual({ x: 1, y: 0 });
+    expect(keyDirection(false, false, true, false)).toEqual({ x: 0, y: -1 });
+    const d = keyDirection(true, false, false, true);
+    expect(Math.hypot(d.x, d.y)).toBeCloseTo(1);
+  });
+  it("clampPoint keeps points inside bounds", () => {
+    expect(clampPoint({ x: -5, y: 900 }, 100, 50)).toEqual({ x: 0, y: 50 });
+    expect(clampPoint({ x: 10, y: 20 }, 100, 50)).toEqual({ x: 10, y: 20 });
   });
 });

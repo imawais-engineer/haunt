@@ -95,9 +95,9 @@ export const SCREEN = {
 export const TEXT = {
   title: "HAUNT",
   instructions:
-    "Click an object to possess it. Click again to scare. Drive every investigator out before dawn. E possesses, Space scares, R releases.",
+    "Click an object to possess it. Click again to scare. Drive every investigator out before dawn. WASD or arrows drift. E possesses, Space scares, R releases.",
   startHint: "Click or press Enter to begin",
-  restartHint: "Click or press Enter to haunt again",
+  restartHint: "Click, Enter, R or Esc to haunt again",
   win: "They fled. The house is yours.",
   lose: "Dawn broke. They stayed.",
 } as const;
