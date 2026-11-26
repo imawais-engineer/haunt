@@ -1,0 +1,64 @@
+// Pure, Phaser-free helpers for scare animation, footsteps and atmosphere.
+import { AUDIO, FX } from "./presentation";
+
+/** Master output gain: silent when muted, AUDIO.master otherwise. */
+export function masterGain(muted: boolean): number {
+  return muted ? 0 : AUDIO.master;
+}
+
+/** Whether the AudioContext should be running: only while the tab is visible. */
+export function shouldRunAudio(visibility: string): boolean {
+  return visibility !== "hidden";
+}
+
+/** 0..1 progress of an effect that started at `start`, or null when finished or not started. */
+export function effectProgress(now: number, start: number, duration: number = FX.scareSeconds): number | null {
+  const p = (now - start) / duration;
+  return p >= 0 && p < 1 ? p : null;
+}
+
+/** Decaying shake offset for progress p in 0..1. Zero at the end. */
+export function shakeOffset(p: number): { x: number; y: number } {
+  const decay = 1 - Math.min(1, Math.max(0, p));
+  const phase = p * FX.scareSeconds * FX.shakeHz * Math.PI * 2;
+  return { x: Math.sin(phase) * FX.shakeAmplitude * decay, y: Math.cos(phase * 1.3) * FX.shakeAmplitude * decay * 0.5 };
+}
+
+/** Ghost flare strength: quick rise, slow fall, 0..1. */
+export function flareEnvelope(p: number): number {
+  const c = Math.min(1, Math.max(0, p));
+  return c < 0.15 ? c / 0.15 : 1 - (c - 0.15) / 0.85;
+}
+
+/** Candle flicker multiplier in (1 - depth)..1, deterministic in t. */
+export function candleFlicker(t: number): number {
+  const a = Math.sin(t * FX.flickerHz * Math.PI * 2);
+  const b = Math.sin(t * FX.flickerHz * 2.7 * Math.PI * 2 + 1.3);
+  const n = (a + b) / 4 + 0.5; // 0..1
+  return 1 - FX.flickerDepth * (1 - n);
+}
+
+/** Advance a stride accumulator by speed*dt. Returns the new remainder and footsteps taken. */
+export function advanceStride(acc: number, speed: number, dt: number, stride: number = FX.strideLengthPx): { acc: number; steps: number } {
+  if (!(speed > 0) || !(dt > 0)) return { acc, steps: 0 };
+  const total = acc + speed * dt;
+  const steps = Math.floor(total / stride);
+  return { acc: total - steps * stride, steps };
+}
+
+/** Vertical walk bob in px; zero when standing still. */
+export function walkBob(t: number, speed: number): number {
+  if (!(speed > 0)) return 0;
+  return Math.abs(Math.sin(t * speed * FX.bobHzPerSpeed * Math.PI)) * -FX.bobPx;
+}
+
+/** -1 or 1 from horizontal movement, keeping `previous` when nearly still. */
+export function facingFor(dx: number, previous: 1 | -1): 1 | -1 {
+  if (Math.abs(dx) < FX.facingMinDx) return previous;
+  return dx > 0 ? 1 : -1;
+}
+
+/** Start times (seconds from the stinger start) of the discordant piano phrase. */
+export function pianoSchedule(): number[] {
+  return AUDIO.pianoNotes.map((_, i) => i * AUDIO.pianoNoteSeconds);
+}
