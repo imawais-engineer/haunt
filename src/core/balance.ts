@@ -49,3 +49,18 @@ export const NIGHT = {
   /** Window in which a second scare counts as "chained". */
   frightWindowSeconds: 10,
 } as const;
+
+/** Scare reach in pixels per radius label. Beyond this a scare does nothing. */
+export const SCARE_RADIUS_PX = {
+  small: 150,
+  medium: 250,
+  large: 400,
+} as const;
+
+/**
+ * Distance falloff: damage scales linearly from 1.0 at distance 0 down to
+ * `edgeFactor` at the radius edge. Outside the radius there is no effect.
+ */
+export const FALLOFF = {
+  edgeFactor: 0.4,
+} as const;
