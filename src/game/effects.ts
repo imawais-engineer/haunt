@@ -1,6 +1,16 @@
 // Pure, Phaser-free helpers for scare animation, footsteps and atmosphere.
 import { AUDIO, FX } from "./presentation";
 
+/** Master output gain: silent when muted, AUDIO.master otherwise. */
+export function masterGain(muted: boolean): number {
+  return muted ? 0 : AUDIO.master;
+}
+
+/** Whether the AudioContext should be running: only while the tab is visible. */
+export function shouldRunAudio(visibility: string): boolean {
+  return visibility !== "hidden";
+}
+
 /** 0..1 progress of an effect that started at `start`, or null when finished or not started. */
 export function effectProgress(now: number, start: number, duration: number = FX.scareSeconds): number | null {
   const p = (now - start) / duration;

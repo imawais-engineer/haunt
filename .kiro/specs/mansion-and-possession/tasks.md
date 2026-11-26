@@ -7,5 +7,5 @@
 - [x] 3.5 HUD: sanity bars, ectoplasm meter, dawn sky strip (Scare Director).
 - [x] 3.6 Title screen (<30 words of instructions), win/lose screens, restart.
 - [x] 3.7 Candle flicker, fog, scare animations, audio cues.
-- [x] 3.8 Acceptance (Day 4, Nov 29): playable end-to-end, first full
+- [ ] 3.8 Acceptance (Day 4, Nov 29): playable end-to-end, first full
   playtest recorded. Then stop adding systems; Day 5 is balance only.

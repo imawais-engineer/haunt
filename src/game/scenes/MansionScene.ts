@@ -76,13 +76,14 @@ export class MansionScene extends Phaser.Scene {
     for (const k of KINDS) {
       this.actorLabels.set(k, this.add.text(0, 0, "", { fontFamily: FONT.family, fontSize: FONT.small, color: COLORS.text }).setOrigin(0.5));
     }
-    this.hud = new Hud(this, KINDS, { onScare: () => this.doScare(), onRelease: () => this.doRelease() });
+    this.hud = new Hud(this, KINDS, { onScare: () => this.doScare(), onRelease: () => this.doRelease(), onMute: () => gameAudio.toggleMute() });
 
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => this.onClick({ x: p.worldX, y: p.worldY }));
     const kb = this.input.keyboard;
     kb?.on("keydown-SPACE", () => this.doScare());
     kb?.on("keydown-E", () => this.doPossess());
     kb?.on("keydown-R", () => this.doRelease());
+    kb?.on("keydown-M", () => gameAudio.toggleMute());
   }
 
   private objectAt(p: Point): ObjectId | null {
@@ -149,7 +150,7 @@ export class MansionScene extends Phaser.Scene {
 
     this.updateAudio(dt);
     this.draw();
-    this.hud.update({ agents: this.actors.map((a) => a.agent), ectoplasm: this.ghost.ectoplasm, timeLeft: this.timer.timeLeft });
+    this.hud.update({ agents: this.actors.map((a) => a.agent), ectoplasm: this.ghost.ectoplasm, timeLeft: this.timer.timeLeft, muted: gameAudio.muted });
 
     const outcome = nightOutcome(this.actors.map((a) => a.agent.core), this.timer);
     if (outcome !== "ongoing") {

@@ -9,11 +9,13 @@ export interface HudView {
   readonly agents: readonly Agent[];
   readonly ectoplasm: number;
   readonly timeLeft: number;
+  readonly muted: boolean;
 }
 
 export interface HudHandlers {
   readonly onScare: () => void;
   readonly onRelease: () => void;
+  readonly onMute: () => void;
 }
 
 const TOP = MANSION.height;
@@ -24,6 +26,7 @@ export class Hud {
   private readonly clock: Phaser.GameObjects.Text;
   private readonly labels = new Map<InvestigatorKind, Phaser.GameObjects.Text>();
   private readonly ectoLabel: Phaser.GameObjects.Text;
+  private readonly muteLabel: Phaser.GameObjects.Text;
 
   constructor(private readonly scene: Phaser.Scene, kinds: readonly InvestigatorKind[], handlers: HudHandlers) {
     this.g = scene.add.graphics();
@@ -37,17 +40,18 @@ export class Hud {
     this.ectoLabel = scene.add.text(ectoX, TOP + HUD.rowLabels, "Ectoplasm", style);
     const bx = CANVAS.width - HUD.pad - HUD.buttonWidth * 2 - HUD.buttonGap;
     const by = TOP + HUD.rowBars;
+    this.muteLabel = this.button(bx - HUD.muteButtonWidth - HUD.buttonGap, by, "Mute (M)", handlers.onMute, HUD.muteButtonWidth);
     this.button(bx, by, "Scare (Space)", handlers.onScare);
     this.button(bx + HUD.buttonWidth + HUD.buttonGap, by, "Release (R)", handlers.onRelease);
   }
 
-  private button(x: number, y: number, label: string, onClick: () => void): void {
+  private button(x: number, y: number, label: string, onClick: () => void, width: number = HUD.buttonWidth): Phaser.GameObjects.Text {
     const box = this.scene.add
-      .rectangle(x, y, HUD.buttonWidth, HUD.buttonHeight, COLORS.button)
+      .rectangle(x, y, width, HUD.buttonHeight, COLORS.button)
       .setOrigin(0)
       .setInteractive({ useHandCursor: true });
-    this.scene.add
-      .text(x + HUD.buttonWidth / 2, y + HUD.buttonHeight / 2, label, {
+    const text = this.scene.add
+      .text(x + width / 2, y + HUD.buttonHeight / 2, label, {
         fontFamily: FONT.family,
         fontSize: FONT.small,
         color: COLORS.buttonText,
@@ -57,6 +61,7 @@ export class Hud {
       event.stopPropagation();
       onClick();
     });
+    return text;
   }
 
   update(view: HudView): void {
@@ -75,6 +80,7 @@ export class Hud {
     const skyW = CANVAS.width - HUD.pad * 2;
     g.fillStyle(Phaser.Display.Color.GetColor(c.r, c.g, c.b)).fillRect(HUD.pad, TOP + HUD.rowSky, skyW, HUD.skyHeight);
     g.fillStyle(COLORS.sun).fillCircle(HUD.pad + skyW * p, TOP + HUD.rowSky + HUD.skyHeight / 2, HUD.sunRadius);
+    this.muteLabel.setText(view.muted ? "Unmute (M)" : "Mute (M)");
     this.clock.setText(`Dawn ${formatClock(view.timeLeft)}`);
 
     view.agents.forEach((agent, i) => {

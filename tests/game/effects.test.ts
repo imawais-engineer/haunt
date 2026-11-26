@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceStride, candleFlicker, effectProgress, facingFor, flareEnvelope, pianoSchedule, shakeOffset, walkBob } from "../../src/game/effects";
+import { advanceStride, candleFlicker, effectProgress, facingFor, flareEnvelope, masterGain, pianoSchedule, shouldRunAudio, shakeOffset, walkBob } from "../../src/game/effects";
 import { AUDIO, FX } from "../../src/game/presentation";
 
 describe("effects helpers", () => {
@@ -52,5 +52,16 @@ describe("effects helpers", () => {
     const s = pianoSchedule();
     expect(s).toHaveLength(AUDIO.pianoNotes.length);
     expect(s).toEqual([...s].sort((a, b) => a - b));
+  });
+});
+
+describe("audio state helpers", () => {
+  it("masterGain is 0 when muted and AUDIO.master otherwise", () => {
+    expect(masterGain(true)).toBe(0);
+    expect(masterGain(false)).toBe(AUDIO.master);
+  });
+  it("shouldRunAudio is false only when the tab is hidden", () => {
+    expect(shouldRunAudio("hidden")).toBe(false);
+    expect(shouldRunAudio("visible")).toBe(true);
   });
 });

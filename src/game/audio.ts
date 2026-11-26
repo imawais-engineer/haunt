@@ -2,7 +2,7 @@
 // The AudioContext is created only after the first pointer or key input.
 import type { ObjectId } from "../core/mansion";
 import { AUDIO } from "./presentation";
-import { pianoSchedule } from "./effects";
+import { masterGain, pianoSchedule, shouldRunAudio } from "./effects";
 
 type Ctor = typeof AudioContext;
 
@@ -12,11 +12,39 @@ export class GameAudio {
   private hum: { stop: () => void } | null = null;
   private humWanted = false;
   private armed = false;
+  private visibilityBound = false;
+  private _muted = false;
+
+  get muted(): boolean {
+    return this._muted;
+  }
+
+  setMuted(muted: boolean): void {
+    this._muted = muted;
+    if (this.master) this.master.gain.value = masterGain(muted);
+  }
+
+  toggleMute(): boolean {
+    this.setMuted(!this._muted);
+    return this._muted;
+  }
+
+  /** Suspend while the tab is hidden, resume when visible again. */
+  private syncVisibility = (): void => {
+    const ctx = this.ctx;
+    if (!ctx) return;
+    if (shouldRunAudio(document.visibilityState)) void ctx.resume();
+    else void ctx.suspend();
+  };
 
   /** Listen for the first user input, then create/resume the context. Safe to call repeatedly. */
   arm(): void {
     if (this.armed || typeof window === "undefined") return;
     this.armed = true;
+    if (!this.visibilityBound) {
+      this.visibilityBound = true;
+      document.addEventListener("visibilitychange", this.syncVisibility);
+    }
     const unlock = () => {
       window.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keydown", unlock);
@@ -36,9 +64,9 @@ export class GameAudio {
       if (!C) return;
       this.ctx = new C();
       this.master = this.ctx.createGain();
-      this.master.gain.value = AUDIO.master;
+      this.master.gain.value = masterGain(this._muted);
       this.master.connect(this.ctx.destination);
-      void this.ctx.resume();
+      this.syncVisibility();
       if (this.humWanted) this.startHum();
     } catch {
       this.ctx = null; // mute-safe: audio is optional

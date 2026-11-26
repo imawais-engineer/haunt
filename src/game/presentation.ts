@@ -82,6 +82,7 @@ export const HUD = {
   buttonWidth: 100,
   buttonHeight: 32,
   buttonGap: 12,
+  muteButtonWidth: 90,
 } as const;
 
 export const SCREEN = {
