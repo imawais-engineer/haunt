@@ -122,3 +122,64 @@ export const PHOTOGRAPHER = {
   /** Share of scare damage she takes while paused taking a photo. */
   pausedDamageMultiplier: 1,
 } as const;
+
+/**
+ * Mansion layout (Spec 3). One screen, top-down, pixels. PLACEHOLDER numbers
+ * for the grey-box build: the Level Architect may move rooms and objects,
+ * but only here. Room ids match `ScareObject.room`.
+ */
+export type RoomId = ScareObject["room"];
+
+export interface Rect {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+export const MANSION = {
+  width: 960,
+  height: 640,
+  rooms: {
+    bedroom:  { x: 240, y: 0,   width: 480, height: 160 },
+    study:    { x: 0,   y: 160, width: 400, height: 200 },
+    entrance: { x: 400, y: 160, width: 400, height: 200 },
+    dining:   { x: 0,   y: 360, width: 560, height: 200 },
+  } satisfies Record<RoomId, Rect>,
+  /** Front door: where fleeing investigators exit. */
+  door: { x: 780, y: 540 },
+  /** An investigator within this distance of the door has reached it. */
+  doorReachPx: 30,
+} as const;
+
+/** Where each possessable object sits. Must lie inside its own room. */
+export const OBJECT_POSITIONS = {
+  chandelier: { x: 600, y: 240 },
+  piano:      { x: 200, y: 260 },
+  mirror:     { x: 480, y: 80 },
+  painting:   { x: 280, y: 460 },
+} as const;
+
+/** Investigators start here and patrol these waypoints in order, looping. */
+export const INVESTIGATOR_START = { x: 600, y: 300 } as const;
+export const PATROL_ROUTE = [
+  { x: 600, y: 300 },
+  { x: 200, y: 300 },
+  { x: 480, y: 100 },
+  { x: 280, y: 480 },
+] as const;
+/** Distance at which a patrol waypoint or scare location counts as reached. */
+export const ARRIVE_PX = 10;
+
+/** The ghost (Spec 3). PLACEHOLDERS for the Day 5 balance pass. */
+export const GHOST = {
+  start: { x: 600, y: 200 },
+  /** Drift speed in px/s. This is the travel model: time between objects = distance / speed. */
+  speedPxPerSecond: 220,
+  /** E near an object possesses it within this distance. */
+  possessRangePx: 70,
+  /** Possessable objects glow while the ghost drifts within this distance. */
+  glowRangePx: 180,
+  /** Ectoplasm spent to enter an object. Leaving is free. */
+  possessCost: 5,
+} as const;
