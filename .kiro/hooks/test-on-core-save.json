@@ -1,0 +1,1 @@
+{"command":"npm test","description":"On every save to src/core/, run Vitest unit + property tests.","name":"test-on-core-save","paths":["src/core/**"],"trigger":"onFileSave"}

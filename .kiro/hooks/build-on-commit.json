@@ -1,0 +1,1 @@
+{"command":"npm run build","description":"On commit, build the production bundle so a broken build is caught before it reaches GitHub Pages.","name":"build-on-commit","trigger":"onCommit"}

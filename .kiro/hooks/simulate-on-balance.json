@@ -1,0 +1,1 @@
+{"command":"npm run simulate:balance","description":"On every save to balance data, run the headless balance simulation (scripted nights) and report whether the balance target still holds.","name":"simulate-on-balance-change","paths":["src/core/balance.ts"],"trigger":"onFileSave"}
