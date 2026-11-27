@@ -1,0 +1,108 @@
+{
+ "mode": "lose",
+ "url": "http://localhost:4173/haunt/",
+ "events": [
+  {
+   "wall": 0,
+   "msg": "page loaded",
+   "status": 200
+  },
+  {
+   "wall": 0,
+   "msg": "title rendered",
+   "canvas": {
+    "x": 121,
+    "y": 0,
+    "w": 1037.828125,
+    "h": 800
+   }
+  },
+  {
+   "wall": 4,
+   "msg": "clicked title",
+   "diff": 25.4
+  },
+  {
+   "wall": 155,
+   "msg": "mid-night screenshot"
+  },
+  {
+   "wall": 304,
+   "msg": "end screen",
+   "detected": true,
+   "endSeenAtSeconds": 298,
+   "earlyEnd": false,
+   "diffFromNightStart": 28.7
+  },
+  {
+   "wall": 308,
+   "msg": "restart attempted",
+   "diffFromEnd": 28.6,
+   "hudDiffFromNight": 0
+  }
+ ],
+ "signatures": [
+  {
+   "at": 31,
+   "hudDiff": 0
+  },
+  {
+   "at": 62,
+   "hudDiff": 0
+  },
+  {
+   "at": 92,
+   "hudDiff": 0
+  },
+  {
+   "at": 122,
+   "hudDiff": 0
+  },
+  {
+   "at": 152,
+   "hudDiff": 0
+  },
+  {
+   "at": 184,
+   "hudDiff": 0
+  },
+  {
+   "at": 215,
+   "hudDiff": 0
+  },
+  {
+   "at": 246,
+   "hudDiff": 0
+  },
+  {
+   "at": 276,
+   "hudDiff": 0
+  }
+ ],
+ "errors": [],
+ "warnings": [
+  "[.WebGL-0x2224003a3600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[.WebGL-0x2224003a3600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[.WebGL-0x2224003a3600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "[.WebGL-0x2224003a3600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "failedRequests": [],
+ "badResponses": [],
+ "screenshots": [
+  "lose-1-title.png",
+  "lose-2-mid-night.png",
+  "lose-4-end.png",
+  "lose-5-restart.png"
+ ],
+ "browser": "159.0.8154.6",
+ "result": {
+  "titleRendered": true,
+  "startChangedScreen": true,
+  "endScreenDetected": true,
+  "endSeenAtSeconds": 298,
+  "restartChangedScreen": true,
+  "restartHudBack": true,
+  "wallSeconds": 308,
+  "clean": true
+ }
+}
