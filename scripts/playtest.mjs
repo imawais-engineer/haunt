@@ -151,8 +151,9 @@ async function playOneStep(s) {
     return;
   }
   // Pick the best usable object elsewhere, preferring more targets and then cheaper cost.
+  // Hopping costs ghost.possessCost on top of the scare, so only go when both are affordable.
   const candidates = cfg.objects
-    .filter((o) => o.id !== cur?.id && usable(o) && score(o) > 0)
+    .filter((o) => o.id !== cur?.id && usable(o) && s.ghost.ectoplasm >= o.cost + cfg.ghost.possessCost && score(o) > 0)
     .sort((a, b) => score(b) - score(a) || a.cost - b.cost);
   if (candidates.length) {
     await clickGame(cfg.pos[candidates[0].id]);

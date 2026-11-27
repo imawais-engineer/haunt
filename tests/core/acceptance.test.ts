@@ -28,31 +28,34 @@ describe("scripted night: possess piano, scare Medium repeatedly", () => {
       return r;
     };
 
-    // 100 -> 80: first scare is never chained.
+    // First scare is never chained.
     expect(fire(0).chained).toBe(false);
-    expect(inv.sanity).toBe(80);
-    // 80 -> 60: target was not rattled (80 >= 70), so still unchained.
+    expect(inv.sanity).toBe(SANITY.start - piano.damage);
+    // Target is still above the rattled threshold, so the second is unchained too.
+    expect(inv.sanity).toBeGreaterThan(SANITY.rattledAt);
     expect(fire(6).chained).toBe(false);
-    expect(inv.sanity).toBe(60);
-    // 60 -> 40: target is rattled (60 < 70), chained; piano multiplier is 1.0.
+    expect(inv.sanity).toBe(SANITY.start - 2 * piano.damage);
+    // Now rattled: chained, scaled by the piano multiplier.
+    expect(inv.sanity).toBeLessThanOrEqual(SANITY.rattledAt);
     const third = fire(12);
     expect(third.chained).toBe(true);
-    expect(third.damage).toBe(20);
-    expect(inv.sanity).toBe(40);
+    expect(third.damage).toBe(piano.damage * piano.frightMultiplier);
+    expect(inv.sanity).toBe(SANITY.start - 2 * piano.damage - piano.damage * piano.frightMultiplier);
     expect(ecto).toBe(55);
   });
 
   it("chains a Mirror scare after the target is rattled, with the multiplier applied", () => {
     let inv = createInvestigator();
     inv = applyScare(inv, chandelier, 0, 0).investigator;
-    expect(inv.sanity).toBe(75);
+    expect(inv.sanity).toBe(SANITY.start - chandelier.damage);
     inv = applyScare(inv, piano, 0, 1).investigator;
-    expect(inv.sanity).toBe(55);
+    expect(inv.sanity).toBe(SANITY.start - chandelier.damage - piano.damage);
+    expect(inv.sanity).toBeLessThanOrEqual(SANITY.rattledAt);
 
     const r = applyScare(inv, mirror, 0, 2);
     expect(r.chained).toBe(true);
-    expect(r.damage).toBe(22.5);
-    expect(r.sanity).toBe(32.5);
+    expect(r.damage).toBe(mirror.damage * mirror.frightMultiplier);
+    expect(r.sanity).toBe(SANITY.start - chandelier.damage - piano.damage - mirror.damage * mirror.frightMultiplier);
     expect(r.sanity).toBeGreaterThanOrEqual(0);
     expect(r.sanity).toBeLessThanOrEqual(SANITY.max);
   });
@@ -60,6 +63,6 @@ describe("scripted night: possess piano, scare Medium repeatedly", () => {
   it("does not chain a Mirror scare against a calm target", () => {
     const r = applyScare(createInvestigator(), mirror, 0, 0);
     expect(r.chained).toBe(false);
-    expect(r.sanity).toBe(85);
+    expect(r.sanity).toBe(SANITY.start - mirror.damage);
   });
 });

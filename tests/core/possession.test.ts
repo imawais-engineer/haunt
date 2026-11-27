@@ -77,7 +77,7 @@ describe("travel", () => {
     expect(t).toBeGreaterThan(eta - GHOST.possessRangePx / GHOST.speedPxPerSecond - 0.2);
   });
 
-  it.skipIf(GHOST.possessCost === 0)("gives up the heading when ectoplasm is too low", () => {
+  it("gives up the heading when ectoplasm is too low", () => {
     let g = headFor(createGhost(0), "painting");
     for (let i = 0; i < 200; i++) g = { ...updateGhost(g, 0.1), ectoplasm: 0 };
     expect(g.possessed).toBeNull();
@@ -141,7 +141,7 @@ describe("scare through the economy and investigator rules", () => {
     const start = { ...actorAt("skeptic", "mirror") };
     const rattled = { ...start, agent: { ...start.agent, core: { ...start.agent.core, sanity: 60, lastRattledAt: 0 } } };
     const out = scare(g, [rattled], 1).actors[0]!.agent.core.sanity;
-    expect(out).toBe(60 - 15 * 1.5);
+    expect(out).toBe(60 - objectById("mirror").damage * objectById("mirror").frightMultiplier);
   });
 
   it("the Photographer takes half damage while moving", () => {
