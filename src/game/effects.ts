@@ -1,6 +1,12 @@
 // Pure, Phaser-free helpers for scare animation, footsteps and atmosphere.
 import { AUDIO, FX } from "./presentation";
 
+export interface TrailMark {
+  x: number;
+  y: number;
+  born: number;
+}
+
 /** Master output gain: silent when muted, AUDIO.master otherwise. */
 export function masterGain(muted: boolean): number {
   return muted ? 0 : AUDIO.master;
@@ -74,4 +80,17 @@ export function keyDirection(left: boolean, right: boolean, up: boolean, down: b
 /** Clamp a point into the rectangle 0..width, 0..height. */
 export function clampPoint(p: { x: number; y: number }, width: number, height: number): { x: number; y: number } {
   return { x: Math.min(width, Math.max(0, p.x)), y: Math.min(height, Math.max(0, p.y)) };
+}
+
+/** Drops expired marks and, when `fleeing`, adds one at `pos` once it is trailSpacingPx from the newest mark. */
+export function updateTrail(trail: readonly TrailMark[], pos: { x: number; y: number }, now: number, fleeing: boolean): TrailMark[] {
+  const live = trail.filter((m) => now - m.born < FX.trailSeconds);
+  const last = live[live.length - 1];
+  if (fleeing && (!last || Math.hypot(pos.x - last.x, pos.y - last.y) >= FX.trailSpacingPx)) live.push({ x: pos.x, y: pos.y, born: now });
+  return live;
+}
+
+/** 1 when a mark is new, 0 when it expires. */
+export function trailFade(mark: TrailMark, now: number): number {
+  return Math.max(0, 1 - (now - mark.born) / FX.trailSeconds);
 }

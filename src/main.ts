@@ -6,7 +6,7 @@ gameAudio.arm();
 
 const game = new Phaser.Game(gameConfig);
 
-// Read-only handle for scripts/playtest.mjs. Only exposed with ?debug in the URL.
-if (new URLSearchParams(window.location.search).has("debug")) {
+// Read-only handle for scripts/playtest.mjs. Dev server only (stripped from production builds).
+if (import.meta.env.DEV) {
   (window as unknown as { __haunt: Phaser.Game }).__haunt = game;
 }

@@ -149,6 +149,11 @@ export const FX = {
   pianoLidOpenRad: 0.7,
   flashAlpha: 0.6,
   pathAlpha: 0.5,
+  /** Fading footprint trail behind a fleeing investigator. */
+  trailSeconds: 1.6,
+  trailSpacingPx: 18,
+  trailRadius: 3,
+  trailAlpha: 0.5,
 } as const;
 
 export const ACTOR_LOOK = {
@@ -199,4 +204,5 @@ export const FX_COLORS = {
   flash: 0xffffff,
   path: 0xf2d95c,
   sense: 0xd7b8f0,
+  trail: 0xe05555,
 } as const;

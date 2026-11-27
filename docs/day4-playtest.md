@@ -4,7 +4,7 @@
 
 - Chromium 159.0.8154.6, headless, driven by Playwright (`scripts/playtest.mjs`).
 - WebGL through SwiftShader (`--use-gl=swiftshader --enable-unsafe-swiftshader`). Phaser ran with the shipped config (`Phaser.AUTO`), no changes.
-- Viewport 1280x800. Vite dev server, page opened with `?debug`, which exposes a read-only `window.__haunt` (the Phaser game) so the script can read time left and sanity.
+- Viewport 1280x800. Vite dev server (`npm run dev` style, started by the script). The dev server exposes a read-only `window.__haunt` (the Phaser game) so the script can read time left and sanity. It is gated on `import.meta.env.DEV`, so production builds do not contain it.
 - Run: `node scripts/playtest.mjs win` and `node scripts/playtest.mjs lose` (each starts its own Vite server). Screenshots and JSON logs go to `docs/day4-playtest/`.
 
 ## Method
@@ -29,7 +29,9 @@ Win run, first time each investigator reached each state (seconds left):
 | --- | --- | --- | --- |
 | Skeptic | 289.3 | 253.0 | 222.1 |
 | Medium | 289.3 | 278.6 | 232.5 |
-| Photographer | 289.3 | 262.4 | last to go, about 212 |
+| Photographer | 289.3 | 262.4 | not polled (see note) |
+
+Note on the Photographer: the log has no poll where she was gone. The last sample (220 s left) shows her at sanity 4, panicked, and the End scene appeared after the last poll at 211.8 s left. So the win happened between 220 s and 211.8 s left, which is where "about 212 s" comes from; her exact time of going is not logged.
 
 Both runs then restarted correctly: second night began at about 297.5 s left, sanity 100 for all three, ectoplasm 100, no leftover state.
 
@@ -42,8 +44,8 @@ No page errors and no console errors. Only Chromium `GL Driver Message ... GPU s
 ## Per-investigator behaviour
 
 - Skeptic walks toward scares ("walk-to-scare"), takes the first damage and is the first to be rattled, then panics and walks to the door.
-- Medium dropped fastest early (71 to 37 sanity in the first 10 s) and left first.
-- Photographer lasted longest in the win run (sanity 3 when the other two had gone), consistent with her moving-damage multiplier.
+- Medium dropped fastest early (72 at 290 s left to 38 at 280 s left, from the 10 s samples) and left first.
+- Photographer lasted longest in the win run (sanity 4 at the 220 s sample, when the other two had gone), consistent with her moving-damage multiplier.
 - Panicked investigators already walk to the door ("back-away" target is the door), so "fleeing" (sanity 0) happens at or near the door and the run-to-door animation is almost never visible.
 
 ## Found and fixed
@@ -58,8 +60,8 @@ Balance observations only. `src/core/balance.ts` is unchanged.
 - A simple bot wins in about 88 s of a 300 s night (possessCost is 0). The existing simulation baselines in `docs/day5-balance-notes.md` are 163 s (possessCost 5) and 190.8 s (possessCost 0), so the bot plays more efficiently than the simulated policy. Nights are likely too short for a competent player.
 - Ectoplasm fell from about 58 to 9 within 10 s of the first scares and then regenerated slowly (2/s). The bot spent most of the night waiting on ectoplasm in the win run after the opening burst.
 - An idle player loses cleanly, but nothing is lost by waiting: investigators never find the ghost. No pressure on the player.
-- Fleeing is rarely visible because panic already sends investigators to the door (design question for Day 5 or the Scare Director).
+- Fleeing is rarely visible because panic already sends investigators to the door. Decision: do not slow the run. A fading footprint trail now follows a running investigator (`FX.trail*` in `src/game/presentation.ts`) so the run is readable.
 
 ## Task status
 
-3.3 and 3.4 are ticked: drifting (WASD and mouse), possession, Space scares, ectoplasm spend and cooldowns were all exercised and visible in sanity changes. 3.8 is ticked: the playtest ran and is recorded here. 3.2 stays unticked: room layout and object placement render, but there is no collision, which the task names.
+3.3 and 3.4 are ticked: drifting (WASD and mouse), possession, Space scares, ectoplasm spend and cooldowns were all exercised and visible in sanity changes. 3.8 is ticked: the playtest ran and is recorded here. 3.2 is ticked after rewording: room layout and object placement render, and collision does not exist and will not be added.

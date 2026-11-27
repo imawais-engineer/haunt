@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceStride, candleFlicker, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, masterGain, pianoSchedule, shouldRunAudio, shakeOffset, walkBob } from "../../src/game/effects";
+import { advanceStride, candleFlicker, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, masterGain, pianoSchedule, shouldRunAudio, shakeOffset, trailFade, updateTrail, walkBob, type TrailMark } from "../../src/game/effects";
 import { AUDIO, FX } from "../../src/game/presentation";
 
 describe("effects helpers", () => {
@@ -76,5 +76,25 @@ describe("audio state helpers", () => {
   it("clampPoint keeps points inside bounds", () => {
     expect(clampPoint({ x: -5, y: 900 }, 100, 50)).toEqual({ x: 0, y: 50 });
     expect(clampPoint({ x: 10, y: 20 }, 100, 50)).toEqual({ x: 10, y: 20 });
+  });
+});
+
+describe("fleeing trail", () => {
+  it("adds marks only while fleeing and spaced apart", () => {
+    let t: TrailMark[] = [];
+    t = updateTrail(t, { x: 0, y: 0 }, 0, true);
+    t = updateTrail(t, { x: 1, y: 0 }, 0.1, true);
+    expect(t).toHaveLength(1);
+    t = updateTrail(t, { x: FX.trailSpacingPx, y: 0 }, 0.2, true);
+    expect(t).toHaveLength(2);
+    t = updateTrail(t, { x: 999, y: 0 }, 0.3, false);
+    expect(t).toHaveLength(2);
+  });
+  it("marks fade out and are removed after trailSeconds", () => {
+    const m = { x: 0, y: 0, born: 0 };
+    expect(trailFade(m, 0)).toBe(1);
+    expect(trailFade(m, FX.trailSeconds / 2)).toBeCloseTo(0.5);
+    expect(trailFade(m, FX.trailSeconds * 2)).toBe(0);
+    expect(updateTrail([m], { x: 0, y: 0 }, FX.trailSeconds, false)).toEqual([]);
   });
 });

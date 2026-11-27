@@ -4,7 +4,7 @@
 //   node scripts/playtest.mjs lose   # do nothing until dawn, then restart
 //
 // Starts its own Vite dev server, reads game state through the read-only
-// `window.__haunt` handle (only exposed with ?debug) and writes screenshots and
+// `window.__haunt` handle (only exposed by the dev server (import.meta.env.DEV)) and writes screenshots and
 // a JSON log into docs/day4-playtest/. Exits 0 when the expected sequence
 // (title -> night -> end screen -> restart -> second night) completed without
 // uncaught page errors.
@@ -21,7 +21,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = join(root, "docs", "day4-playtest");
 mkdirSync(outDir, { recursive: true });
 const port = mode === "win" ? 5181 : 5182;
-const url = `http://localhost:${port}/?debug`;
+const url = `http://localhost:${port}/`;
 const POLL_MS = 200;
 const wallLimitMs = 25 * 60 * 1000;
 
