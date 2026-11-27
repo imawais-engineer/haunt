@@ -19,10 +19,10 @@ export interface ScareObject {
 }
 
 export const SCARE_OBJECTS: ScareObject[] = [
-  { id: "chandelier", room: "entrance", cost: 20, damage: 25, radius: "large",  cooldownSeconds: 8, frightMultiplier: 1.0 },
-  { id: "piano",      room: "study",    cost: 15, damage: 20, radius: "medium", cooldownSeconds: 6, frightMultiplier: 1.0 },
-  { id: "mirror",     room: "bedroom",  cost: 10, damage: 15, radius: "small",  cooldownSeconds: 5, frightMultiplier: 1.5 },
-  { id: "painting",   room: "dining",   cost: 10, damage: 12, radius: "medium", cooldownSeconds: 4, frightMultiplier: 1.0 },
+  { id: "chandelier", room: "entrance", cost: 20, damage: 20, radius: "large",  cooldownSeconds: 8, frightMultiplier: 1.0 },
+  { id: "piano",      room: "study",    cost: 15, damage: 16, radius: "medium", cooldownSeconds: 6, frightMultiplier: 1.0 },
+  { id: "mirror",     room: "bedroom",  cost: 10, damage: 12, radius: "small",  cooldownSeconds: 5, frightMultiplier: 1.5 },
+  { id: "painting",   room: "dining",   cost: 10, damage: 10, radius: "medium", cooldownSeconds: 4, frightMultiplier: 1.0 },
 ];
 
 export const SANITY = {
@@ -182,7 +182,8 @@ export const GHOST = {
   glowRangePx: 180,
   /**
    * Ectoplasm spent to enter an object. The spec defines no possess cost, only
-   * scares cost ectoplasm. Day 5 lever: raise this if possession-hopping feels free.
+   * scares cost ectoplasm. Day 5: 6 so hopping between objects is not free
+   * (simulation: perfect bot wins with about 59s left, handicapped bot loses about 95%).
    */
-  possessCost: 0,
+  possessCost: 6,
 } as const;
