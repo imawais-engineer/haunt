@@ -74,7 +74,7 @@ export const SIZES = {
 export const HUD = {
   pad: 12,
   skyHeight: 18,
-  barWidth: 150,
+  barWidth: 130,
   barHeight: 12,
   barGap: 20,
   sunRadius: 8,
@@ -102,6 +102,81 @@ export const TEXT = {
   restartHint: "Click, Enter, R or Esc to haunt again",
   win: "They fled. The house is yours.",
   lose: "Dawn broke. They stayed.",
+  insufficient: "Not enough ectoplasm",
+  recharging: "Still recharging",
+} as const;
+
+/** Short barks shown above an investigator when their state worsens. */
+export const BARKS = {
+  skeptic: { rattled: "Probably a draft.", panicked: "This is not possible!", fleeing: "I'm out of here!" },
+  medium: { rattled: "Something is here...", panicked: "It is angry!", fleeing: "Leave this place!" },
+  photographer: { rattled: "Did you see that?", panicked: "Get the shot! Get out!", fleeing: "No photo is worth this!" },
+} as const;
+
+/** Day 6 polish: notices, barks, costume, vignette, title and end screens. Seconds unless noted. */
+export const POLISH = {
+  noticeSeconds: 1.2,
+  noticeLiftPx: 44,
+  noticeRisepx: 14,
+  ectoFlashSeconds: 0.5,
+  buzzFreq: 90,
+  buzzGain: 0.14,
+  buzzSeconds: 0.18,
+  barkSeconds: 1.8,
+  barkLiftPx: 30,
+  barkFontPx: "11px",
+  cameraShakeMs: 160,
+  cameraShakeIntensity: 0.004,
+  vignetteSteps: 8,
+  vignetteBand: 90,
+  vignetteAlpha: 0.45,
+  ghostBodyWidth: 22,
+  ghostBodyHeight: 26,
+  ghostBobPx: 3,
+  ghostBobHz: 0.6,
+  ghostHemWaves: 4,
+  ghostEyeRadius: 2.2,
+  ghostEyeGap: 5,
+  possessGlowRadius: 30,
+  possessGlowAlpha: 0.35,
+  portraitRadius: 7,
+  portraitGap: 5,
+  tickWidth: 2,
+  gradientBands: 24,
+  titleFogBands: 6,
+  titleGhostScale: 5,
+  titleGhostAlpha: 0.14,
+  titleGlowAlpha: 0.12,
+  titleGhostX: 150,
+  titleGhostY: 440,
+  candleGlowAlpha: 0.08,
+  candleX: 90,
+  candleBaseY: 520,
+  candleHeight: 40,
+  candleWidth: 12,
+  candleFlameRadius: 7,
+  candleGlowRadius: 110,
+} as const;
+
+export const FAINT_FOG = 0.08;
+
+export const POLISH_COLORS = {
+  vignette: 0x000000,
+  tick: 0xffffff,
+  notice: "#ff9c9c",
+  noticeBar: 0xe05555,
+  bark: "#ffffff",
+  possessGlow: 0xb8f2ff,
+  ghostEye: 0x14111c,
+  portraitSkin: 0xe8d5c0,
+  titleTop: 0x05040a,
+  titleBottom: 0x2a1f3d,
+  titleGlow: 0xb8f2ff,
+  candleBody: 0xe8e2c8,
+  endWinTop: 0x2a2f6b,
+  endWinBottom: 0xf4a259,
+  endLoseTop: 0x030307,
+  endLoseBottom: 0x1a1626,
 } as const;
 
 /** Day 3 scare animation, atmosphere and investigator drawing. Seconds unless noted. */

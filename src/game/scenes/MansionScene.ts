@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import { ECTOPLASM, MANSION, PHOTOGRAPHER, OBJECT_POSITIONS, SCARE_OBJECTS, type InvestigatorKind, type RoomId } from "../../core/balance";
+import { ECTOPLASM, GHOST, MANSION, PHOTOGRAPHER, OBJECT_POSITIONS, SCARE_OBJECTS, type InvestigatorKind, type RoomId } from "../../core/balance";
+import { isReady } from "../../core/ectoplasm";
 import { agentState, behaviourOf, createAgent, flashRevealsGhost, type Behaviour, type Point } from "../../core/investigator";
 import { distance, type ObjectId } from "../../core/mansion";
 import { NightTimer, nightOutcome } from "../../core/night";
@@ -21,8 +22,8 @@ import {
 import { Hud } from "../../ui/hud";
 import { gameAudio } from "../audio";
 import { bindKeys } from "../input";
-import { advanceStride, candleFlicker, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, shakeOffset, trailFade, updateTrail, walkBob, type TrailMark } from "../effects";
-import { ACTOR_LOOK, COLORS, FONT, FX, FX_COLORS, KIND_LABELS, OBJECT_LABELS, ROOM_LABELS, SIZES, STATE_COLORS } from "../presentation";
+import { advanceStride, barkFor, candleFlicker, ghostBob, headingGaveUp, insufficientMessage, noticeFade, scareBlockedMessage, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, shakeOffset, trailFade, updateTrail, walkBob, type TrailMark } from "../effects";
+import { ACTOR_LOOK, COLORS, FONT, FX, FX_COLORS, KIND_LABELS, OBJECT_LABELS, POLISH, POLISH_COLORS, ROOM_LABELS, SIZES, STATE_COLORS, TEXT } from "../presentation";
 
 const KINDS: readonly InvestigatorKind[] = ["skeptic", "medium", "photographer"];
 const ROOM_IDS = Object.keys(MANSION.rooms) as RoomId[];
@@ -45,6 +46,11 @@ export class MansionScene extends Phaser.Scene {
   private lastX = new Map<InvestigatorKind, number>();
   private wasFleeing = new Set<InvestigatorKind>();
   private trails = new Map<InvestigatorKind, TrailMark[]>();
+  private notice: { text: string; born: number } | null = null;
+  private noticeText!: Phaser.GameObjects.Text;
+  private lastState = new Map<InvestigatorKind, string>();
+  private barks = new Map<InvestigatorKind, { text: string; born: number }>();
+  private barkTexts = new Map<InvestigatorKind, Phaser.GameObjects.Text>();
 
   constructor() {
     super("Mansion");
@@ -64,6 +70,10 @@ export class MansionScene extends Phaser.Scene {
     this.lastX = new Map();
     this.wasFleeing = new Set();
     this.trails = new Map();
+    this.notice = null;
+    this.lastState = new Map();
+    this.barks = new Map();
+    this.barkTexts = new Map();
     gameAudio.startHum();
     this.events.once("shutdown", () => gameAudio.stopHum());
 
@@ -80,6 +90,10 @@ export class MansionScene extends Phaser.Scene {
     for (const k of KINDS) {
       this.actorLabels.set(k, this.add.text(0, 0, "", { fontFamily: FONT.family, fontSize: FONT.small, color: COLORS.text }).setOrigin(0.5));
     }
+    for (const k of KINDS) {
+      this.barkTexts.set(k, this.add.text(0, 0, "", { fontFamily: FONT.family, fontSize: POLISH.barkFontPx, color: POLISH_COLORS.bark, backgroundColor: "#14111ccc", padding: { x: 4, y: 2 } }).setOrigin(0.5).setDepth(5).setVisible(false));
+    }
+    this.noticeText = this.add.text(0, 0, "", { fontFamily: FONT.family, fontSize: FONT.medium, color: POLISH_COLORS.notice, stroke: "#000000", strokeThickness: 3 }).setOrigin(0.5).setDepth(6).setVisible(false);
     this.hud = new Hud(this, KINDS, { onScare: () => this.doScare(), onRelease: () => this.doRelease(), onMute: () => gameAudio.toggleMute() });
 
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => this.onClick({ x: p.worldX, y: p.worldY }));
@@ -123,7 +137,18 @@ export class MansionScene extends Phaser.Scene {
     }
   }
 
+  private showNotice(text: string): void {
+    this.notice = { text, born: this.now };
+    gameAudio.buzz();
+  }
+
   private doScare(): void {
+    const g = this.ghost;
+    if (g.possessed) {
+      const obj = SCARE_OBJECTS.find((o) => o.id === g.possessed)!;
+      const msg = scareBlockedMessage(g.ectoplasm, obj.cost, isReady(g.cooldowns, obj, this.now));
+      if (msg) return this.showNotice(msg);
+    }
     const out = scare(this.ghost, this.actors, this.now);
     if (!out.fired) return;
     this.ghost = out.ghost;
@@ -132,12 +157,17 @@ export class MansionScene extends Phaser.Scene {
     const id = this.ghost.possessed!;
     this.cameras.main.flash(SIZES.scareFlashMs);
     this.scareFx.set(id, this.now);
+    this.cameras.main.shake(POLISH.cameraShakeMs, POLISH.cameraShakeIntensity);
     gameAudio.stinger(id);
   }
 
   private doPossess(): void {
     const id = possessableObject(this.ghost);
-    if (id) this.ghost = possess(this.ghost, id);
+    if (id) {
+      const msg = insufficientMessage(this.ghost.ectoplasm, GHOST.possessCost);
+      if (msg) return this.showNotice(msg);
+      this.ghost = possess(this.ghost, id);
+    }
   }
 
   private doRelease(): void {
@@ -161,13 +191,18 @@ export class MansionScene extends Phaser.Scene {
       this.ghost = drift(this.ghost, this.driftTarget, dt);
       if (distance(this.ghost.pos, this.driftTarget) === 0) this.driftTarget = null;
     }
+    const prevHeading = this.ghost.heading;
     const next = updateWorld(this.ghost, this.actors, this.now, dt);
     this.ghost = next.ghost;
     this.actors = next.actors;
+    if (headingGaveUp(prevHeading, this.ghost.heading, this.ghost.possessed, this.ghost.ectoplasm, GHOST.possessCost) && !this.driftTarget) {
+      this.showNotice(TEXT.insufficient);
+    }
 
     this.updateAudio(dt);
+    this.updateOverlays();
     this.draw();
-    this.hud.update({ agents: this.actors.map((a) => a.agent), ectoplasm: this.ghost.ectoplasm, timeLeft: this.timer.timeLeft, muted: gameAudio.muted });
+    this.hud.update({ agents: this.actors.map((a) => a.agent), ectoFlash: this.notice ? noticeFade(this.now, this.notice.born, POLISH.ectoFlashSeconds) : 0, ectoplasm: this.ghost.ectoplasm, timeLeft: this.timer.timeLeft, muted: gameAudio.muted });
 
     const outcome = nightOutcome(this.actors.map((a) => a.agent.core), this.timer);
     if (outcome !== "ongoing") {
@@ -214,7 +249,7 @@ export class MansionScene extends Phaser.Scene {
       g.lineStyle(SIZES.roomLineWidth * 2, FX_COLORS.flare, FX.flareAlpha * flare).strokeCircle(gp.x, gp.y, SIZES.ghostRadius + FX.flareRadius * (1 - flare));
       g.fillStyle(FX_COLORS.flare, FX.flareAlpha * flare * 0.5).fillCircle(gp.x, gp.y, SIZES.ghostRadius + FX.flareRadius * flare);
     }
-    g.fillStyle(COLORS.ghost, shown ? SIZES.ghostAlpha : SIZES.ghostWanderAlpha).fillCircle(gp.x, gp.y, SIZES.ghostRadius);
+    this.drawGhost(gp.x, gp.y + ghostBob(this.now), shown ? SIZES.ghostAlpha : SIZES.ghostWanderAlpha, this.ghost.possessed !== null);
 
     // Investigators, driven by behaviourOf.
     for (const a of this.actors) {
@@ -230,6 +265,60 @@ export class MansionScene extends Phaser.Scene {
     }
 
     this.drawFog();
+    this.drawVignette();
+  }
+
+  /** Sheet ghost: rounded head, straight sides, wavy hem, two eyes. Glows while possessing. */
+  private drawGhost(x: number, y: number, alpha: number, possessing: boolean): void {
+    const g = this.g;
+    const w = POLISH.ghostBodyWidth;
+    const h = POLISH.ghostBodyHeight;
+    if (possessing) g.fillStyle(POLISH_COLORS.possessGlow, POLISH.possessGlowAlpha).fillCircle(x, y, POLISH.possessGlowRadius);
+    const top = y - h / 2;
+    g.fillStyle(COLORS.ghost, alpha).fillCircle(x, top + w / 2, w / 2).fillRect(x - w / 2, top + w / 2, w, h - w / 2 - w / (POLISH.ghostHemWaves * 2));
+    const n = POLISH.ghostHemWaves;
+    const r = w / (n * 2);
+    for (let i = 0; i < n; i++) g.fillCircle(x - w / 2 + r + i * r * 2, y + h / 2 - r, r);
+    g.fillStyle(POLISH_COLORS.ghostEye, alpha).fillCircle(x - POLISH.ghostEyeGap / 2 - 1, top + w / 2, POLISH.ghostEyeRadius).fillCircle(x + POLISH.ghostEyeGap / 2 + 1, top + w / 2, POLISH.ghostEyeRadius);
+  }
+
+  /** Dark edges, drawn after fog. */
+  private drawVignette(): void {
+    const g = this.g;
+    g.fillStyle(POLISH_COLORS.vignette, POLISH.vignetteAlpha / POLISH.vignetteSteps);
+    for (let i = 1; i <= POLISH.vignetteSteps; i++) {
+      const w = (POLISH.vignetteBand * i) / POLISH.vignetteSteps;
+      g.fillRect(0, 0, w, MANSION.height);
+      g.fillRect(MANSION.width - w, 0, w, MANSION.height);
+      g.fillRect(w, 0, MANSION.width - 2 * w, w);
+      g.fillRect(w, MANSION.height - w, MANSION.width - 2 * w, w);
+    }
+  }
+
+  /** Failure notice above the ghost and investigator barks on state changes. */
+  private updateOverlays(): void {
+    const n = this.notice;
+    const f = n ? noticeFade(this.now, n.born) : 0;
+    this.noticeText.setVisible(f > 0);
+    if (n && f > 0) {
+      const gp = this.ghost.pos;
+      this.noticeText.setText(n.text).setAlpha(f).setPosition(gp.x, gp.y - POLISH.noticeLiftPx - (1 - f) * POLISH.noticeRisepx);
+    }
+    for (const a of this.actors) {
+      const kind = a.agent.kind;
+      const st = agentState(a.agent);
+      const prev = this.lastState.get(kind);
+      this.lastState.set(kind, st);
+      if (prev !== undefined) {
+        const line = barkFor(kind, prev as typeof st, st);
+        if (line) this.barks.set(kind, { text: line, born: this.now });
+      }
+      const bark = this.barks.get(kind);
+      const bf = bark ? noticeFade(this.now, bark.born, POLISH.barkSeconds) : 0;
+      const t = this.barkTexts.get(kind)!;
+      t.setVisible(bf > 0 && st !== "gone");
+      if (bark && bf > 0) t.setText(bark.text).setAlpha(Math.min(1, bf * 2)).setPosition(a.pos.x, a.pos.y - FX.bodyHeight - POLISH.barkLiftPx);
+    }
   }
 
   private drawObjectIcon(id: ObjectId, x: number, y: number, prog: number | null, flicker: number): void {

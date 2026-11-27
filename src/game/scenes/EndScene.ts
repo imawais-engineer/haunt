@@ -1,7 +1,8 @@
 import Phaser from "phaser";
 import type { NightOutcome } from "../../core/night";
 import { bindRestart } from "../input";
-import { CANVAS, COLORS, FONT, SCREEN, TEXT } from "../presentation";
+import { drawFogBands, drawGradient } from "./backdrop";
+import { CANVAS, COLORS, FAINT_FOG, FONT, FX_COLORS, POLISH_COLORS, SCREEN, TEXT } from "../presentation";
 
 export class EndScene extends Phaser.Scene {
   private outcome: NightOutcome = "lose";
@@ -17,6 +18,12 @@ export class EndScene extends Phaser.Scene {
   create(): void {
     const won = this.outcome === "win";
     const cx = CANVAS.width / 2;
+    const bg = this.add.graphics();
+    if (won) drawGradient(bg, POLISH_COLORS.endWinTop, POLISH_COLORS.endWinBottom);
+    else {
+      drawGradient(bg, POLISH_COLORS.endLoseTop, POLISH_COLORS.endLoseBottom);
+      drawFogBands(bg, 0, FX_COLORS.fog, FAINT_FOG * 2);
+    }
     this.add
       .text(cx, SCREEN.titleY, won ? TEXT.win : TEXT.lose, {
         fontFamily: FONT.family,

@@ -1,8 +1,9 @@
 import Phaser from "phaser";
-import { ECTOPLASM, type InvestigatorKind } from "../core/balance";
+import { ECTOPLASM, GHOST, type InvestigatorKind } from "../core/balance";
 import { agentState, type Agent } from "../core/investigator";
 import { dawnProgress, formatClock } from "../game/dawn";
-import { CANVAS, COLORS, FONT, HUD, HUD_HEIGHT, KIND_LABELS, STATE_COLORS } from "../game/presentation";
+import { ectoplasmLabel } from "../game/effects";
+import { CANVAS, COLORS, FONT, HUD, HUD_HEIGHT, KIND_LABELS, POLISH, POLISH_COLORS, STATE_COLORS } from "../game/presentation";
 import { MANSION, SANITY } from "../core/balance";
 
 export interface HudView {
@@ -10,6 +11,8 @@ export interface HudView {
   readonly ectoplasm: number;
   readonly timeLeft: number;
   readonly muted: boolean;
+  /** 0..1 red flash strength on the ectoplasm bar. */
+  readonly ectoFlash: number;
 }
 
 export interface HudHandlers {
@@ -34,7 +37,7 @@ export class Hud {
     this.clock = scene.add.text(CANVAS.width - HUD.pad, TOP + HUD.rowSky, "", style).setOrigin(1, 0);
     kinds.forEach((kind, i) => {
       const x = HUD.pad + i * (HUD.barWidth + HUD.barGap);
-      this.labels.set(kind, scene.add.text(x, TOP + HUD.rowLabels, KIND_LABELS[kind], style));
+      this.labels.set(kind, scene.add.text(x + POLISH.portraitRadius * 2 + POLISH.portraitGap, TOP + HUD.rowLabels, KIND_LABELS[kind], style));
     });
     const ectoX = HUD.pad + kinds.length * (HUD.barWidth + HUD.barGap);
     this.ectoLabel = scene.add.text(ectoX, TOP + HUD.rowLabels, "Ectoplasm", style);
@@ -86,12 +89,20 @@ export class Hud {
     view.agents.forEach((agent, i) => {
       const x = HUD.pad + i * (HUD.barWidth + HUD.barGap);
       const state = agentState(agent);
-      this.bar(x, agent.core.sanity / SANITY.max, STATE_COLORS[state === "gone" ? "fleeing" : state]);
-      this.labels.get(agent.kind)?.setText(`${KIND_LABELS[agent.kind]}: ${state === "gone" ? "fled" : state}`);
+      const tint = STATE_COLORS[state === "gone" ? "fleeing" : state];
+      this.bar(x, agent.core.sanity / SANITY.max, tint);
+      g.fillStyle(POLISH_COLORS.portraitSkin, state === "gone" ? 0.3 : 1).fillCircle(x + POLISH.portraitRadius, TOP + HUD.rowLabels + 8, POLISH.portraitRadius);
+      g.fillStyle(tint, state === "gone" ? 0.3 : 0.55).fillCircle(x + POLISH.portraitRadius, TOP + HUD.rowLabels + 8, POLISH.portraitRadius);
+      g.fillStyle(POLISH_COLORS.ghostEye).fillCircle(x + POLISH.portraitRadius - 2.5, TOP + HUD.rowLabels + 6.5, 1.2).fillCircle(x + POLISH.portraitRadius + 2.5, TOP + HUD.rowLabels + 6.5, 1.2);
+      this.labels.get(agent.kind)?.setText(`${KIND_LABELS[agent.kind]}\n${state === "gone" ? "fled" : state}`);
     });
     const ectoX = HUD.pad + view.agents.length * (HUD.barWidth + HUD.barGap);
     this.bar(ectoX, view.ectoplasm / ECTOPLASM.max, COLORS.ectoplasm);
-    this.ectoLabel.setText(`Ectoplasm ${Math.floor(view.ectoplasm)}`);
+    if (view.ectoFlash > 0) g.fillStyle(POLISH_COLORS.noticeBar, view.ectoFlash).fillRect(ectoX, TOP + HUD.rowBars, HUD.barWidth, HUD.barHeight);
+    // Tick marking the possess cost on the bar.
+    const tickX = ectoX + HUD.barWidth * (GHOST.possessCost / ECTOPLASM.max);
+    g.fillStyle(POLISH_COLORS.tick).fillRect(tickX - POLISH.tickWidth / 2, TOP + HUD.rowBars - 3, POLISH.tickWidth, HUD.barHeight + 6);
+    this.ectoLabel.setText(ectoplasmLabel(view.ectoplasm, GHOST.possessCost));
   }
 
   private bar(x: number, fraction: number, color: number): void {
