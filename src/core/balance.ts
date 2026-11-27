@@ -183,7 +183,7 @@ export const GHOST = {
   /**
    * Ectoplasm spent to enter an object. The spec defines no possess cost, only
    * scares cost ectoplasm. Day 5: 6 so hopping between objects is not free
-   * (simulation: perfect bot wins with about 59s left, handicapped bot loses about 95%).
+   * (simulation: perfect bot wins with about 59s left, handicapped bot loses about 96% of 300 seeded runs).
    */
   possessCost: 6,
 } as const;

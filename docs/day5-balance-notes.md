@@ -17,7 +17,7 @@ All tuning numbers live only in `src/core/balance.ts`.
 
 ## Levers and placeholders
 
-- `GHOST.possessCost` is 0. The spec defines no possess cost, only scares cost ectoplasm. Raise it if possession-hopping feels free.
+- `GHOST.possessCost` is 6 (was 0). The spec defines no possess cost, only scares cost ectoplasm. Raised on Day 5 so possession-hopping is not free.
 - Photographer `movingDamageMultiplier` is a 50% placeholder.
 - Fright multipliers (`frightMultiplier` per object) are placeholders.
 
@@ -56,7 +56,7 @@ Damage is about 0.8x and hopping now costs ectoplasm. Other levers were not need
 | Perfect bot, simulation (time left, win) | 190.8s | 59.4s |
 | Handicapped human, 300 seeded runs: wins | 88% (264 of 300) | 4% (11 of 300) |
 | Human, investigators gone at dawn 0 / 1 / 2 / 3 | 1 / 3 / 32 / 264 | 12 / 104 / 173 / 11 |
-| Human, narrow-loss share | 11% | 90% |
+| Human, narrow-loss share (300 seeded runs; the 100-run default of `simulate:balance` shows 93%) | 11% | 90% |
 | Human, mean time of first investigator leaving | 63s | 130s |
 | Human, mean time left when it does win | 96s | 53s |
 | Spam bot | loses, 0 gone, 5 scares | loses, 0 gone, 4 scares |
@@ -92,7 +92,7 @@ Spec 1 (`.kiro/specs/scare-sanity-economy`) says sanity recovers +1 per 5s only 
 
 - A rattled investigator (70 or below) never recovers, so damage that crosses the rattle line is permanent. Only light damage heals.
 - Waiting therefore already has a cost: recovery erodes small hits, and the 300s dawn clock keeps running. The idle playtest run loses with all sanity at 100.
-- Idle pressure from an investigator finding the ghost is not needed. The win condition needs all three gone, so a ghost that does nothing loses. The handicapped profile, which includes idle spells, loses 96% of runs.
+- Idle pressure from an investigator finding the ghost is not needed. The win condition needs all three gone, so a ghost that does nothing loses. The handicapped profile, which includes idle spells, loses 96% of runs (11 wins in 300 seeded runs; `npm run simulate:balance` default 100 runs gives 4% wins).
 
 Recommendation: no idle-pressure mechanic. Adding one would be a new system, which steering forbids.
 
@@ -101,3 +101,16 @@ Recommendation: no idle-pressure mechanic. Adding one would be a new system, whi
 1. Human target: chosen numbers give 90% narrow losses but 58% of human losses end with 2 gone, which is a bit more generous than "nearly break a second". The simulation cannot tell if a real player's tempo is closer. Confirm with one real playtest before locking.
 2. Perfect bot wins with 59s left, at the top of the 30 to 60s band. Fine for run 2 to 3 chaining, but a real chaining player is not a perfect bot.
 3. Should `balance.ts` be locked now (steering: lock by end of Day 5), or do you want a human playtest first?
+
+## Day 5 re-run of both playtest scenarios
+
+Run on branch `day5/balance` with `node scripts/playtest.mjs win` and `lose` (logs in `docs/day5-playtest/`; `docs/day4-playtest/` restored).
+
+- win: PASS, exit 0, win with 34.6s left, second night started. No page errors (only 4 WebGL "GPU stall due to ReadPixels" driver warnings).
+- lose: PASS, exit 0, idle run loses at dawn with all sanity 100, second night started. No page errors (same WebGL warnings only).
+
+## Status
+
+Balance unlocked pending human playtest.
+
+The narrow-loss evidence is bot-only. The handicapped bot is an approximation, not a human. `src/core/balance.ts` is not locked. The lock happens after one real human playtest.

@@ -1,0 +1,422 @@
+{
+ "mode": "lose",
+ "events": [
+  {
+   "wall": 1,
+   "msg": "title shown"
+  },
+  {
+   "wall": 1,
+   "msg": "night started via click"
+  },
+  {
+   "wall": 151,
+   "msg": "mid-night shot",
+   "timeLeft": 149.87483000000717
+  },
+  {
+   "wall": 301,
+   "msg": "end screen",
+   "outcome": "lose",
+   "lastTimeLeftSeen": 0.1,
+   "lastSample": {
+    "timeLeft": 0,
+    "wall": 300,
+    "ecto": 100,
+    "possessed": null,
+    "actors": [
+     "skeptic:100:investigate",
+     "medium:100:investigate",
+     "photographer:100:investigate"
+    ]
+   },
+   "wallSeconds": 301
+  },
+  {
+   "wall": 304,
+   "msg": "second night started",
+   "timeLeft": 297.4834400000017,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ],
+   "ecto": 100
+  }
+ ],
+ "samples": [
+  {
+   "timeLeft": 290,
+   "wall": 10,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 280,
+   "wall": 20,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 270,
+   "wall": 30,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 260,
+   "wall": 40,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 250,
+   "wall": 50,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 240,
+   "wall": 60,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 230,
+   "wall": 70,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 220,
+   "wall": 80,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 210,
+   "wall": 90,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 200,
+   "wall": 100,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 190,
+   "wall": 110,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 180,
+   "wall": 120,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 170,
+   "wall": 130,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 160,
+   "wall": 140,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 150,
+   "wall": 150,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 140,
+   "wall": 160,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 130,
+   "wall": 170,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 120,
+   "wall": 180,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 110,
+   "wall": 190,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 100,
+   "wall": 200,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 90,
+   "wall": 210,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 80,
+   "wall": 220,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 70,
+   "wall": 230,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 60,
+   "wall": 240,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 50,
+   "wall": 250,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 40,
+   "wall": 260,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 30,
+   "wall": 270,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 20,
+   "wall": 280,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 10,
+   "wall": 290,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  {
+   "timeLeft": 0,
+   "wall": 300,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  }
+ ],
+ "errors": [
+  "warning: [.WebGL-0x2a04003b7c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x2a04003b7c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x2a04003b7c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x2a04003b7c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "screenshots": [
+  "lose-1-title.png",
+  "lose-2-mid-night.png",
+  "lose-4-end.png",
+  "lose-5-restart.png"
+ ],
+ "browser": "159.0.8154.6",
+ "firstSeen": {
+  "skeptic:investigate": 299.7,
+  "medium:investigate": 299.7,
+  "photographer:investigate": 299.7
+ },
+ "result": {
+  "outcome": "lose",
+  "lastTimeLeftSeen": 0.1,
+  "lastSample": {
+   "timeLeft": 0,
+   "wall": 300,
+   "ecto": 100,
+   "possessed": null,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ]
+  },
+  "wallSeconds": 301,
+  "restart": {
+   "timeLeft": 297.4834400000017,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ],
+   "ecto": 100
+  }
+ }
+}
