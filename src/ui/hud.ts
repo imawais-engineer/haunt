@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { ECTOPLASM, GHOST, type InvestigatorKind } from "../core/balance";
 import { agentState, type Agent } from "../core/investigator";
 import { dawnProgress, formatClock } from "../game/dawn";
-import { ectoplasmLabel } from "../game/effects";
+import { ectoplasmLabel, tickPosition } from "../game/effects";
 import { CANVAS, COLORS, FONT, HUD, HUD_HEIGHT, KIND_LABELS, POLISH, POLISH_COLORS, STATE_COLORS } from "../game/presentation";
 import { MANSION, SANITY } from "../core/balance";
 
@@ -100,7 +100,7 @@ export class Hud {
     this.bar(ectoX, view.ectoplasm / ECTOPLASM.max, COLORS.ectoplasm);
     if (view.ectoFlash > 0) g.fillStyle(POLISH_COLORS.noticeBar, view.ectoFlash).fillRect(ectoX, TOP + HUD.rowBars, HUD.barWidth, HUD.barHeight);
     // Tick marking the possess cost on the bar.
-    const tickX = ectoX + HUD.barWidth * (GHOST.possessCost / ECTOPLASM.max);
+    const tickX = tickPosition(ectoX, HUD.barWidth, GHOST.possessCost, ECTOPLASM.max);
     g.fillStyle(POLISH_COLORS.tick).fillRect(tickX - POLISH.tickWidth / 2, TOP + HUD.rowBars - 3, POLISH.tickWidth, HUD.barHeight + 6);
     this.ectoLabel.setText(ectoplasmLabel(view.ectoplasm, GHOST.possessCost));
   }

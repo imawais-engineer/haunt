@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GHOST } from "../../src/core/balance";
-import { barkFor, ectoplasmLabel, ghostBob, headingGaveUp, insufficientMessage, noticeFade, scareBlockedMessage } from "../../src/game/effects";
+import { ECTOPLASM, GHOST } from "../../src/core/balance";
+import { barkFor, ectoFlashFor, ectoplasmLabel, tickPosition, ghostBob, headingGaveUp, insufficientMessage, noticeFade, scareBlockedMessage } from "../../src/game/effects";
 import { BARKS, POLISH, TEXT } from "../../src/game/presentation";
 
 describe("insufficient ectoplasm feedback", () => {
@@ -52,5 +52,18 @@ describe("barks", () => {
 describe("ghost costume", () => {
   it("bob stays within amplitude", () => {
     for (let t = 0; t < 5; t += 0.1) expect(Math.abs(ghostBob(t))).toBeLessThanOrEqual(POLISH.ghostBobPx);
+  });
+});
+
+describe("ecto flash and tick", () => {
+  it("flashes only for the insufficient notice", () => {
+    expect(ectoFlashFor({ text: TEXT.insufficient, born: 1 }, 1, 1)).toBe(1);
+    expect(ectoFlashFor({ text: TEXT.recharging, born: 1 }, 1, 1)).toBe(0);
+    expect(ectoFlashFor(null, 1, 1)).toBe(0);
+  });
+  it("places the tick proportionally to the possess cost", () => {
+    expect(tickPosition(10, 100, GHOST.possessCost, ECTOPLASM.max)).toBeCloseTo(10 + 100 * (GHOST.possessCost / ECTOPLASM.max));
+    expect(tickPosition(0, 100, 0, 100)).toBe(0);
+    expect(tickPosition(0, 100, 100, 100)).toBe(100);
   });
 });

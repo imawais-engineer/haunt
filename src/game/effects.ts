@@ -135,3 +135,13 @@ export function ghostBob(t: number): number {
 export function ectoplasmLabel(ectoplasm: number, possessCost: number): string {
   return `Ectoplasm ${Math.floor(ectoplasm)} (possess ${possessCost})`;
 }
+
+/** Ectoplasm bar flash strength: only the "not enough ectoplasm" notice flashes it, never the cooldown notice. */
+export function ectoFlashFor(notice: { text: string; born: number } | null, now: number, seconds: number): number {
+  return notice && notice.text === TEXT.insufficient ? noticeFade(now, notice.born, seconds) : 0;
+}
+
+/** X position of the possess-cost tick on an ectoplasm bar starting at barX. */
+export function tickPosition(barX: number, barWidth: number, possessCost: number, ectoplasmMax: number): number {
+  return barX + barWidth * (possessCost / ectoplasmMax);
+}

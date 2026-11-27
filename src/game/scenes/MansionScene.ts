@@ -22,7 +22,7 @@ import {
 import { Hud } from "../../ui/hud";
 import { gameAudio } from "../audio";
 import { bindKeys } from "../input";
-import { advanceStride, barkFor, candleFlicker, ghostBob, headingGaveUp, insufficientMessage, noticeFade, scareBlockedMessage, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, shakeOffset, trailFade, updateTrail, walkBob, type TrailMark } from "../effects";
+import { advanceStride, barkFor, candleFlicker, ectoFlashFor, ghostBob, headingGaveUp, insufficientMessage, noticeFade, scareBlockedMessage, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, shakeOffset, trailFade, updateTrail, walkBob, type TrailMark } from "../effects";
 import { ACTOR_LOOK, COLORS, FONT, FX, FX_COLORS, KIND_LABELS, OBJECT_LABELS, POLISH, POLISH_COLORS, ROOM_LABELS, SIZES, STATE_COLORS, TEXT } from "../presentation";
 
 const KINDS: readonly InvestigatorKind[] = ["skeptic", "medium", "photographer"];
@@ -131,6 +131,8 @@ export class MansionScene extends Phaser.Scene {
       this.driftTarget = null;
       // Clicking a different object while possessing: release, then fly to the new one.
       if (this.ghost.possessed) this.ghost = release(this.ghost);
+      const msg = insufficientMessage(this.ghost.ectoplasm, GHOST.possessCost);
+      if (msg) this.showNotice(msg);
       this.ghost = headFor(this.ghost, id);
     } else if (!this.ghost.possessed) {
       this.driftTarget = p;
@@ -202,7 +204,7 @@ export class MansionScene extends Phaser.Scene {
     this.updateAudio(dt);
     this.updateOverlays();
     this.draw();
-    this.hud.update({ agents: this.actors.map((a) => a.agent), ectoFlash: this.notice ? noticeFade(this.now, this.notice.born, POLISH.ectoFlashSeconds) : 0, ectoplasm: this.ghost.ectoplasm, timeLeft: this.timer.timeLeft, muted: gameAudio.muted });
+    this.hud.update({ agents: this.actors.map((a) => a.agent), ectoFlash: ectoFlashFor(this.notice, this.now, POLISH.ectoFlashSeconds), ectoplasm: this.ghost.ectoplasm, timeLeft: this.timer.timeLeft, muted: gameAudio.muted });
 
     const outcome = nightOutcome(this.actors.map((a) => a.agent.core), this.timer);
     if (outcome !== "ongoing") {
