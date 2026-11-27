@@ -65,6 +65,12 @@ Each spec is carried through its requirements, design, and tasks before the next
 
 Haunt ships no image or audio files. All sound (scare stingers, ambient hum, footsteps, screams, win/lose stings) is synthesized at runtime with WebAudio and starts after the first click or key press. All visuals are drawn with Phaser graphics.
 
+## Play
+
+Live build: <https://imawais-engineer.github.io/haunt/>
+
+Pushes to `main` run `.github/workflows/deploy.yml` (tests, build, deploy to GitHub Pages). Production builds use the `/haunt/` base path; set `BASE_PATH` to override it. Details in [`docs/day7-deploy.md`](docs/day7-deploy.md).
+
 ## Status
 
 Haunt is in active development.
@@ -76,3 +82,5 @@ Released under the [MIT License](LICENSE). Copyright (c) 2026 Muhammad Awais.
 ## Playtest script
 
 `npm i` then `npx playwright install chromium`, and run `node scripts/playtest.mjs win` or `node scripts/playtest.mjs lose`. It plays a real-time night in headless Chromium and writes screenshots and logs to `docs/day4-playtest/`. Results are in [`docs/day4-playtest.md`](docs/day4-playtest.md). Opening the game with `?debug` exposes a read-only `window.__haunt` for this script.
+
+For a production build (no `window.__haunt`), run `npm run build`, then `npm run preview` (serves http://localhost:4173/haunt/) and `npm run playtest:prod -- win|lose [url]`. It is a black-box script and writes to `docs/day7-playtest/`.
