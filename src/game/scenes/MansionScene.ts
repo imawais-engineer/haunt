@@ -20,7 +20,8 @@ import {
 } from "../../core/possession";
 import { Hud } from "../../ui/hud";
 import { gameAudio } from "../audio";
-import { advanceStride, candleFlicker, effectProgress, facingFor, flareEnvelope, shakeOffset, walkBob } from "../effects";
+import { bindKeys } from "../input";
+import { advanceStride, candleFlicker, effectProgress, clampPoint, facingFor, flareEnvelope, keyDirection, shakeOffset, trailFade, updateTrail, walkBob, type TrailMark } from "../effects";
 import { ACTOR_LOOK, COLORS, FONT, FX, FX_COLORS, KIND_LABELS, OBJECT_LABELS, ROOM_LABELS, SIZES, STATE_COLORS } from "../presentation";
 
 const KINDS: readonly InvestigatorKind[] = ["skeptic", "medium", "photographer"];
@@ -37,11 +38,13 @@ export class MansionScene extends Phaser.Scene {
   private hud!: Hud;
   private actorLabels = new Map<InvestigatorKind, Phaser.GameObjects.Text>();
   private ended = false;
+  private keys: Record<"left" | "right" | "up" | "down" | "a" | "d" | "w" | "s", Phaser.Input.Keyboard.Key> | null = null;
   private scareFx = new Map<ObjectId, number>();
   private stride = new Map<InvestigatorKind, number>();
   private facing = new Map<InvestigatorKind, 1 | -1>();
   private lastX = new Map<InvestigatorKind, number>();
   private wasFleeing = new Set<InvestigatorKind>();
+  private trails = new Map<InvestigatorKind, TrailMark[]>();
 
   constructor() {
     super("Mansion");
@@ -60,6 +63,7 @@ export class MansionScene extends Phaser.Scene {
     this.facing = new Map();
     this.lastX = new Map();
     this.wasFleeing = new Set();
+    this.trails = new Map();
     gameAudio.startHum();
     this.events.once("shutdown", () => gameAudio.stopHum());
 
@@ -79,11 +83,17 @@ export class MansionScene extends Phaser.Scene {
     this.hud = new Hud(this, KINDS, { onScare: () => this.doScare(), onRelease: () => this.doRelease(), onMute: () => gameAudio.toggleMute() });
 
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => this.onClick({ x: p.worldX, y: p.worldY }));
-    const kb = this.input.keyboard;
-    kb?.on("keydown-SPACE", () => this.doScare());
-    kb?.on("keydown-E", () => this.doPossess());
-    kb?.on("keydown-R", () => this.doRelease());
-    kb?.on("keydown-M", () => gameAudio.toggleMute());
+    const bound = bindKeys(this.input.keyboard, Phaser.Input.Keyboard.KeyCodes, {
+      onScare: () => this.doScare(),
+      onPossess: () => this.doPossess(),
+      onRelease: () => this.doRelease(),
+      onMute: () => gameAudio.toggleMute(),
+    });
+    this.keys = bound.keys as typeof this.keys;
+    this.events.once("shutdown", () => {
+      bound.dispose();
+      this.keys = null;
+    });
   }
 
   private objectAt(p: Point): ObjectId | null {
@@ -140,7 +150,14 @@ export class MansionScene extends Phaser.Scene {
     this.now += dt;
     this.timer.tick(dt);
 
-    if (this.driftTarget && !this.ghost.possessed && !this.ghost.heading) {
+    const k = this.keys;
+    const dir = k ? keyDirection(k.left.isDown || k.a.isDown, k.right.isDown || k.d.isDown, k.up.isDown || k.w.isDown, k.down.isDown || k.s.isDown) : { x: 0, y: 0 };
+    if (!this.ghost.possessed && (dir.x !== 0 || dir.y !== 0)) {
+      const reach = MANSION.width;
+      this.driftTarget = null;
+      this.ghost = drift(this.ghost, { x: this.ghost.pos.x + dir.x * reach, y: this.ghost.pos.y + dir.y * reach }, dt);
+      this.ghost = { ...this.ghost, pos: clampPoint(this.ghost.pos, MANSION.width, MANSION.height) };
+    } else if (this.driftTarget && !this.ghost.possessed && !this.ghost.heading) {
       this.ghost = drift(this.ghost, this.driftTarget, dt);
       if (distance(this.ghost.pos, this.driftTarget) === 0) this.driftTarget = null;
     }
@@ -203,10 +220,13 @@ export class MansionScene extends Phaser.Scene {
     for (const a of this.actors) {
       const label = this.actorLabels.get(a.agent.kind)!;
       const b = behaviourOf(a.agent, this.now, MANSION.door);
+      const trail = updateTrail(this.trails.get(a.agent.kind) ?? [], a.pos, this.now, b.action === "run-to-door");
+      this.trails.set(a.agent.kind, trail);
+      for (const m of trail) g.fillStyle(FX_COLORS.trail, FX.trailAlpha * trailFade(m, this.now)).fillCircle(m.x, m.y, FX.trailRadius);
       label.setVisible(b.action !== "gone");
       if (b.action === "gone") continue;
       this.drawActor(a, b);
-      label.setPosition(a.pos.x, a.pos.y - SIZES.actorLabelOffsetY).setText(`${KIND_LABELS[a.agent.kind]}\n${b.action}`);
+      label.setPosition(a.pos.x, a.pos.y - SIZES.actorLabelOffsetY - KINDS.indexOf(a.agent.kind) * SIZES.actorLabelStaggerY).setText(`${KIND_LABELS[a.agent.kind]}\n${b.action}`);
     }
 
     this.drawFog();

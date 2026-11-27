@@ -1,6 +1,12 @@
 // Pure, Phaser-free helpers for scare animation, footsteps and atmosphere.
 import { AUDIO, FX } from "./presentation";
 
+export interface TrailMark {
+  x: number;
+  y: number;
+  born: number;
+}
+
 /** Master output gain: silent when muted, AUDIO.master otherwise. */
 export function masterGain(muted: boolean): number {
   return muted ? 0 : AUDIO.master;
@@ -61,4 +67,30 @@ export function facingFor(dx: number, previous: 1 | -1): 1 | -1 {
 /** Start times (seconds from the stinger start) of the discordant piano phrase. */
 export function pianoSchedule(): number[] {
   return AUDIO.pianoNotes.map((_, i) => i * AUDIO.pianoNoteSeconds);
+}
+
+/** Unit direction from held movement keys. Opposite keys cancel; diagonals are normalised. */
+export function keyDirection(left: boolean, right: boolean, up: boolean, down: boolean): { x: number; y: number } {
+  const x = (right ? 1 : 0) - (left ? 1 : 0);
+  const y = (down ? 1 : 0) - (up ? 1 : 0);
+  const len = Math.hypot(x, y);
+  return len === 0 ? { x: 0, y: 0 } : { x: x / len, y: y / len };
+}
+
+/** Clamp a point into the rectangle 0..width, 0..height. */
+export function clampPoint(p: { x: number; y: number }, width: number, height: number): { x: number; y: number } {
+  return { x: Math.min(width, Math.max(0, p.x)), y: Math.min(height, Math.max(0, p.y)) };
+}
+
+/** Drops expired marks and, when `fleeing`, adds one at `pos` once it is trailSpacingPx from the newest mark. */
+export function updateTrail(trail: readonly TrailMark[], pos: { x: number; y: number }, now: number, fleeing: boolean): TrailMark[] {
+  const live = trail.filter((m) => now - m.born < FX.trailSeconds);
+  const last = live[live.length - 1];
+  if (fleeing && (!last || Math.hypot(pos.x - last.x, pos.y - last.y) >= FX.trailSpacingPx)) live.push({ x: pos.x, y: pos.y, born: now });
+  return live;
+}
+
+/** 1 when a mark is new, 0 when it expires. */
+export function trailFade(mark: TrailMark, now: number): number {
+  return Math.max(0, 1 - (now - mark.born) / FX.trailSeconds);
 }

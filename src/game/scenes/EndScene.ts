@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import type { NightOutcome } from "../../core/night";
+import { bindRestart } from "../input";
 import { CANVAS, COLORS, FONT, SCREEN, TEXT } from "../presentation";
 
 export class EndScene extends Phaser.Scene {
@@ -24,8 +25,6 @@ export class EndScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     this.add.text(cx, SCREEN.hintY, TEXT.restartHint, { fontFamily: FONT.family, fontSize: FONT.medium, color: COLORS.roomLabel }).setOrigin(0.5);
-    const restart = () => this.scene.start("Mansion");
-    this.input.once("pointerdown", restart);
-    this.input.keyboard?.once("keydown-ENTER", restart);
+    bindRestart(this.input, () => this.scene.start("Mansion"));
   }
 }

@@ -1,0 +1,200 @@
+{
+ "mode": "win",
+ "events": [
+  {
+   "wall": 1,
+   "msg": "title shown"
+  },
+  {
+   "wall": 1,
+   "msg": "night started via click"
+  },
+  {
+   "wall": 2,
+   "msg": "input smoke test",
+   "before": {
+    "x": 600,
+    "y": 200
+   },
+   "afterKey": {
+    "x": 680.5654666666671,
+    "y": 200
+   },
+   "afterMouse": {
+    "x": 571.1969118828788,
+    "y": 169.70722946900912
+   },
+   "wasdMoved": true,
+   "mouseMoved": true
+  },
+  {
+   "wall": 90,
+   "msg": "end screen",
+   "outcome": "win",
+   "lastTimeLeftSeen": 211.8,
+   "lastSample": {
+    "timeLeft": 220,
+    "wall": 80,
+    "ecto": 2,
+    "possessed": null,
+    "actors": [
+     "skeptic:0:gone",
+     "medium:0:gone",
+     "photographer:4:panicked"
+    ]
+   },
+   "wallSeconds": 90
+  },
+  {
+   "wall": 93,
+   "msg": "second night started",
+   "timeLeft": 297.48341999999997,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ],
+   "ecto": 100
+  }
+ ],
+ "samples": [
+  {
+   "timeLeft": 290,
+   "wall": 10,
+   "ecto": 58,
+   "possessed": null,
+   "actors": [
+    "skeptic:82:investigate",
+    "medium:72:investigate",
+    "photographer:78:investigate"
+   ]
+  },
+  {
+   "timeLeft": 280,
+   "wall": 20,
+   "ecto": 9,
+   "possessed": null,
+   "actors": [
+    "skeptic:59:rattled",
+    "medium:38:rattled",
+    "photographer:52:rattled"
+   ]
+  },
+  {
+   "timeLeft": 270,
+   "wall": 30,
+   "ecto": 8,
+   "possessed": null,
+   "actors": [
+    "skeptic:59:rattled",
+    "medium:32:panicked",
+    "photographer:44:rattled"
+   ]
+  },
+  {
+   "timeLeft": 260,
+   "wall": 40,
+   "ecto": 6,
+   "possessed": null,
+   "actors": [
+    "skeptic:59:rattled",
+    "medium:32:panicked",
+    "photographer:28:panicked"
+   ]
+  },
+  {
+   "timeLeft": 250,
+   "wall": 50,
+   "ecto": 6,
+   "possessed": null,
+   "actors": [
+    "skeptic:34:panicked",
+    "medium:20:panicked",
+    "photographer:22:panicked"
+   ]
+  },
+  {
+   "timeLeft": 240,
+   "wall": 60,
+   "ecto": 5,
+   "possessed": null,
+   "actors": [
+    "skeptic:22:panicked",
+    "medium:8:panicked",
+    "photographer:16:panicked"
+   ]
+  },
+  {
+   "timeLeft": 230,
+   "wall": 70,
+   "ecto": 3,
+   "possessed": null,
+   "actors": [
+    "skeptic:10:panicked",
+    "medium:0:gone",
+    "photographer:10:panicked"
+   ]
+  },
+  {
+   "timeLeft": 220,
+   "wall": 80,
+   "ecto": 2,
+   "possessed": null,
+   "actors": [
+    "skeptic:0:gone",
+    "medium:0:gone",
+    "photographer:4:panicked"
+   ]
+  }
+ ],
+ "errors": [
+  "warning: [.WebGL-0x30dc003b8e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x30dc003b8e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x30dc003b8e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x30dc003b8e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "screenshots": [
+  "win-1-title.png",
+  "win-4-end.png",
+  "win-5-restart.png"
+ ],
+ "browser": "159.0.8154.6",
+ "firstSeen": {
+  "skeptic:investigate": 298.7,
+  "medium:investigate": 298.7,
+  "photographer:investigate": 298.7,
+  "skeptic:rattled": 289.3,
+  "medium:rattled": 289.3,
+  "photographer:rattled": 289.3,
+  "medium:panicked": 278.6,
+  "photographer:panicked": 262.4,
+  "skeptic:panicked": 253,
+  "medium:gone": 232.5,
+  "skeptic:gone": 222.1
+ },
+ "result": {
+  "outcome": "win",
+  "lastTimeLeftSeen": 211.8,
+  "lastSample": {
+   "timeLeft": 220,
+   "wall": 80,
+   "ecto": 2,
+   "possessed": null,
+   "actors": [
+    "skeptic:0:gone",
+    "medium:0:gone",
+    "photographer:4:panicked"
+   ]
+  },
+  "wallSeconds": 90,
+  "restart": {
+   "timeLeft": 297.48341999999997,
+   "actors": [
+    "skeptic:100:investigate",
+    "medium:100:investigate",
+    "photographer:100:investigate"
+   ],
+   "ecto": 100
+  }
+ }
+}

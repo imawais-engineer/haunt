@@ -64,6 +64,8 @@ export const SIZES = {
   roomLineWidth: 2,
   labelOffsetY: 26,
   actorLabelOffsetY: 34,
+  /** Extra lift per investigator so labels of a clustered group do not overlap. */
+  actorLabelStaggerY: 30,
   maxFrameSeconds: 0.1,
   scareFlashMs: 120,
   fadeMs: 250,
@@ -95,9 +97,9 @@ export const SCREEN = {
 export const TEXT = {
   title: "HAUNT",
   instructions:
-    "Click an object to possess it. Click again to scare. Drive every investigator out before dawn. E possesses, Space scares, R releases.",
+    "Click an object to possess it. Click again to scare. Drive every investigator out before dawn. WASD or arrows drift. E possesses, Space scares, R releases.",
   startHint: "Click or press Enter to begin",
-  restartHint: "Click or press Enter to haunt again",
+  restartHint: "Click, Enter, R or Esc to haunt again",
   win: "They fled. The house is yours.",
   lose: "Dawn broke. They stayed.",
 } as const;
@@ -147,6 +149,11 @@ export const FX = {
   pianoLidOpenRad: 0.7,
   flashAlpha: 0.6,
   pathAlpha: 0.5,
+  /** Fading footprint trail behind a fleeing investigator. */
+  trailSeconds: 1.6,
+  trailSpacingPx: 18,
+  trailRadius: 3,
+  trailAlpha: 0.5,
 } as const;
 
 export const ACTOR_LOOK = {
@@ -197,4 +204,5 @@ export const FX_COLORS = {
   flash: 0xffffff,
   path: 0xf2d95c,
   sense: 0xd7b8f0,
+  trail: 0xe05555,
 } as const;
