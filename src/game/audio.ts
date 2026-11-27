@@ -1,7 +1,7 @@
 // Procedural WebAudio. No audio files: everything is synthesized at runtime.
 // The AudioContext is created only after the first pointer or key input.
 import type { ObjectId } from "../core/mansion";
-import { AUDIO } from "./presentation";
+import { AUDIO, POLISH } from "./presentation";
 import { masterGain, pianoSchedule, shouldRunAudio } from "./effects";
 
 type Ctor = typeof AudioContext;
@@ -177,6 +177,12 @@ export class GameAudio {
   footstep(): void {
     if (!this.ready) return;
     this.tone(AUDIO.footstepFreq, 0, AUDIO.footstepSeconds, AUDIO.footstepGain, "sine", AUDIO.footstepFreq * 0.5);
+  }
+
+  /** Short low buzz for a refused action. */
+  buzz(): void {
+    if (!this.ready) return;
+    this.tone(POLISH.buzzFreq, 0, POLISH.buzzSeconds, POLISH.buzzGain, "sawtooth");
   }
 
   scream(): void {

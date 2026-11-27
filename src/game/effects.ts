@@ -1,5 +1,8 @@
 // Pure, Phaser-free helpers for scare animation, footsteps and atmosphere.
-import { AUDIO, FX } from "./presentation";
+import { canAfford } from "../core/ectoplasm";
+import type { InvestigatorKind } from "../core/balance";
+import type { InvestigatorState } from "../core/sanity";
+import { AUDIO, BARKS, FX, POLISH, TEXT } from "./presentation";
 
 export interface TrailMark {
   x: number;
@@ -93,4 +96,52 @@ export function updateTrail(trail: readonly TrailMark[], pos: { x: number; y: nu
 /** 1 when a mark is new, 0 when it expires. */
 export function trailFade(mark: TrailMark, now: number): number {
   return Math.max(0, 1 - (now - mark.born) / FX.trailSeconds);
+}
+
+/** Notice text when a possess attempt cannot be paid for, otherwise null. */
+export function insufficientMessage(ectoplasm: number, cost: number): string | null {
+  return canAfford(ectoplasm, cost) ? null : TEXT.insufficient;
+}
+
+/** Why a scare cannot fire: not enough ectoplasm wins over cooldown; null when it can. */
+export function scareBlockedMessage(ectoplasm: number, cost: number, cooldownReady: boolean): string | null {
+  if (!canAfford(ectoplasm, cost)) return TEXT.insufficient;
+  return cooldownReady ? null : TEXT.recharging;
+}
+
+/** True when a click-heading flight ended without possessing and the cause was lack of ectoplasm. */
+export function headingGaveUp(prevHeading: string | null, heading: string | null, possessed: string | null, ectoplasm: number, cost: number): boolean {
+  return prevHeading !== null && heading === null && possessed === null && !canAfford(ectoplasm, cost);
+}
+
+/** 1 when a notice starts, 0 after POLISH.noticeSeconds. */
+export function noticeFade(now: number, born: number, seconds: number = POLISH.noticeSeconds): number {
+  return Math.min(1, Math.max(0, 1 - (now - born) / seconds));
+}
+
+/** Bark line when an investigator's state changes to a worse, speaking state; null otherwise. */
+export function barkFor(kind: InvestigatorKind, prev: InvestigatorState, next: InvestigatorState): string | null {
+  if (prev === next) return null;
+  if (next === "rattled" || next === "panicked" || next === "fleeing") return BARKS[kind][next];
+  return null;
+}
+
+/** Ghost costume bob in px, smooth, around zero. */
+export function ghostBob(t: number): number {
+  return Math.sin(t * POLISH.ghostBobHz * Math.PI * 2) * POLISH.ghostBobPx;
+}
+
+/** Possess cost HUD label, e.g. "Ectoplasm 42 (possess 6)". Cost always comes from the caller. */
+export function ectoplasmLabel(ectoplasm: number, possessCost: number): string {
+  return `Ectoplasm ${Math.floor(ectoplasm)} (possess ${possessCost})`;
+}
+
+/** Ectoplasm bar flash strength: only the "not enough ectoplasm" notice flashes it, never the cooldown notice. */
+export function ectoFlashFor(notice: { text: string; born: number } | null, now: number, seconds: number): number {
+  return notice && notice.text === TEXT.insufficient ? noticeFade(now, notice.born, seconds) : 0;
+}
+
+/** X position of the possess-cost tick on an ectoplasm bar starting at barX. */
+export function tickPosition(barX: number, barWidth: number, possessCost: number, ectoplasmMax: number): number {
+  return barX + barWidth * (possessCost / ectoplasmMax);
 }
